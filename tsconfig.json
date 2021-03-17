@@ -14,11 +14,7 @@
     "baseUrl": "./",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": [
-      "es7"
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "lib": ["es7"],
+    "typeRoots": ["node_modules/@types"]
   }
 }

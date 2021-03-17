@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >0.5.0 <0.8.0;
 /* Interface Imports */
-import { iAbs_BaseCrossDomainMessenger } from "../../iOVM/bridge/messaging/iAbs_BaseCrossDomainMessenger.sol";
+import {
+    iAbs_BaseCrossDomainMessenger
+} from "../../iOVM/bridge/messaging/iAbs_BaseCrossDomainMessenger.sol";
 
 /**
  * @title OVM_CrossDomainEnabled
@@ -16,10 +18,8 @@ contract OVM_CrossDomainEnabled {
 
     /***************
      * Constructor *
-     ***************/    
-    constructor(
-        address _messenger
-    ) {
+     ***************/
+    constructor(address _messenger) {
         messenger = _messenger;
     }
 
@@ -31,36 +31,33 @@ contract OVM_CrossDomainEnabled {
      * @notice Enforces that the modified function is only callable by a specific cross-domain account.
      * @param _sourceDomainAccount The only account on the originating domain which is authenticated to call this function.
      */
-    modifier onlyFromCrossDomainAccount(
-        address _sourceDomainAccount
-    ) {
+    modifier onlyFromCrossDomainAccount(address _sourceDomainAccount) {
         require(
             msg.sender == address(getCrossDomainMessenger()),
             "OVM_XCHAIN: messenger contract unauthenticated"
         );
 
         require(
-            getCrossDomainMessenger().xDomainMessageSender() == _sourceDomainAccount,
+            getCrossDomainMessenger().xDomainMessageSender() ==
+                _sourceDomainAccount,
             "OVM_XCHAIN: wrong sender of cross-domain message"
         );
 
         _;
     }
-    
+
     /**********************
      * Internal Functions *
      **********************/
 
     /**
      * @notice Gets the messenger, usually from storage.  This function is exposed in case a child contract needs to override.
-     * @return The address of the cross-domain messenger contract which should be used. 
+     * @return The address of the cross-domain messenger contract which should be used.
      */
     function getCrossDomainMessenger()
         internal
         virtual
-        returns(
-            iAbs_BaseCrossDomainMessenger
-        )
+        returns (iAbs_BaseCrossDomainMessenger)
     {
         return iAbs_BaseCrossDomainMessenger(messenger);
     }
@@ -76,6 +73,10 @@ contract OVM_CrossDomainEnabled {
         bytes memory _data,
         uint32 _gasLimit
     ) internal {
-        getCrossDomainMessenger().sendMessage(_crossDomainTarget, _data, _gasLimit);
+        getCrossDomainMessenger().sendMessage(
+            _crossDomainTarget,
+            _data,
+            _gasLimit
+        );
     }
 }

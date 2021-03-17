@@ -10,7 +10,6 @@ import { Lib_BytesUtils } from "../utils/Lib_BytesUtils.sol";
  * @author Bakaoh (with modifications)
  */
 library Lib_RLPWriter {
-
     /**********************
      * Internal Functions *
      **********************/
@@ -20,14 +19,10 @@ library Lib_RLPWriter {
      * @param _in The byte string to encode.
      * @return _out The RLP encoded string in bytes.
      */
-    function writeBytes(
-        bytes memory _in
-    )
+    function writeBytes(bytes memory _in)
         internal
         pure
-        returns (
-            bytes memory _out
-        )
+        returns (bytes memory _out)
     {
         bytes memory encoded;
 
@@ -45,14 +40,10 @@ library Lib_RLPWriter {
      * @param _in The list of RLP encoded byte strings.
      * @return _out The RLP encoded list of items in bytes.
      */
-    function writeList(
-        bytes[] memory _in
-    )
+    function writeList(bytes[] memory _in)
         internal
         pure
-        returns (
-            bytes memory _out
-        )
+        returns (bytes memory _out)
     {
         bytes memory list = _flatten(_in);
         return abi.encodePacked(_writeLength(list.length, 192), list);
@@ -63,14 +54,10 @@ library Lib_RLPWriter {
      * @param _in The string to encode.
      * @return _out The RLP encoded string in bytes.
      */
-    function writeString(
-        string memory _in
-    )
+    function writeString(string memory _in)
         internal
         pure
-        returns (
-            bytes memory _out
-        )
+        returns (bytes memory _out)
     {
         return writeBytes(bytes(_in));
     }
@@ -80,14 +67,10 @@ library Lib_RLPWriter {
      * @param _in The address to encode.
      * @return _out The RLP encoded address in bytes.
      */
-    function writeAddress(
-        address _in
-    )
+    function writeAddress(address _in)
         internal
         pure
-        returns (
-            bytes memory _out
-        )
+        returns (bytes memory _out)
     {
         return writeBytes(abi.encodePacked(_in));
     }
@@ -97,15 +80,7 @@ library Lib_RLPWriter {
      * @param _in The uint256 to encode.
      * @return _out The RLP encoded uint256 in bytes.
      */
-    function writeUint(
-        uint256 _in
-    )
-        internal
-        pure
-        returns (
-            bytes memory _out
-        )
-    {
+    function writeUint(uint256 _in) internal pure returns (bytes memory _out) {
         return writeBytes(_toBinary(_in));
     }
 
@@ -114,20 +89,11 @@ library Lib_RLPWriter {
      * @param _in The bool to encode.
      * @return _out The RLP encoded bool in bytes.
      */
-    function writeBool(
-        bool _in
-    )
-        internal
-        pure
-        returns (
-            bytes memory _out
-        )
-    {
+    function writeBool(bool _in) internal pure returns (bytes memory _out) {
         bytes memory encoded = new bytes(1);
         encoded[0] = (_in ? bytes1(0x01) : bytes1(0x80));
         return encoded;
     }
-
 
     /*********************
      * Private Functions *
@@ -139,21 +105,16 @@ library Lib_RLPWriter {
      * @param _offset 128 if item is string, 192 if item is list.
      * @return _encoded RLP encoded bytes.
      */
-    function _writeLength(
-        uint256 _len,
-        uint256 _offset
-    )
+    function _writeLength(uint256 _len, uint256 _offset)
         private
         pure
-        returns (
-            bytes memory _encoded
-        )
+        returns (bytes memory _encoded)
     {
         bytes memory encoded;
 
         if (_len < 56) {
             encoded = new bytes(1);
-            encoded[0] = byte(uint8(_len) + uint8(_offset));
+            encoded[0] = bytes1(uint8(_len) + uint8(_offset));
         } else {
             uint256 lenLen;
             uint256 i = 1;
@@ -163,9 +124,9 @@ library Lib_RLPWriter {
             }
 
             encoded = new bytes(lenLen + 1);
-            encoded[0] = byte(uint8(lenLen) + uint8(_offset) + 55);
-            for(i = 1; i <= lenLen; i++) {
-                encoded[i] = byte(uint8((_len / (256**(lenLen-i))) % 256));
+            encoded[0] = bytes1(uint8(lenLen) + uint8(_offset) + 55);
+            for (i = 1; i <= lenLen; i++) {
+                encoded[i] = bytes1(uint8((_len / (256**(lenLen - i))) % 256));
             }
         }
 
@@ -178,15 +139,7 @@ library Lib_RLPWriter {
      * @param _x The integer to encode.
      * @return _binary RLP encoded bytes.
      */
-    function _toBinary(
-        uint256 _x
-    )
-        private
-        pure
-        returns (
-            bytes memory _binary
-        )
-    {
+    function _toBinary(uint256 _x) private pure returns (bytes memory _binary) {
         bytes memory b = abi.encodePacked(_x);
 
         uint256 i = 0;
@@ -215,15 +168,12 @@ library Lib_RLPWriter {
         uint256 _dest,
         uint256 _src,
         uint256 _len
-    )
-        private
-        pure
-    {
+    ) private pure {
         uint256 dest = _dest;
         uint256 src = _src;
         uint256 len = _len;
 
-        for(; len >= 32; len -= 32) {
+        for (; len >= 32; len -= 32) {
             assembly {
                 mstore(dest, mload(src))
             }
@@ -231,7 +181,7 @@ library Lib_RLPWriter {
             src += 32;
         }
 
-        uint256 mask = 256 ** (32 - len) - 1;
+        uint256 mask = 256**(32 - len) - 1;
         assembly {
             let srcpart := and(mload(src), not(mask))
             let destpart := and(mload(dest), mask)
@@ -245,14 +195,10 @@ library Lib_RLPWriter {
      * @param _list List of byte strings to flatten.
      * @return _flattened The flattened byte string.
      */
-    function _flatten(
-        bytes[] memory _list
-    )
+    function _flatten(bytes[] memory _list)
         private
         pure
-        returns (
-            bytes memory _flattened
-        )
+        returns (bytes memory _flattened)
     {
         if (_list.length == 0) {
             return new bytes(0);
@@ -266,13 +212,17 @@ library Lib_RLPWriter {
 
         bytes memory flattened = new bytes(len);
         uint256 flattenedPtr;
-        assembly { flattenedPtr := add(flattened, 0x20) }
+        assembly {
+            flattenedPtr := add(flattened, 0x20)
+        }
 
-        for(i = 0; i < _list.length; i++) {
+        for (i = 0; i < _list.length; i++) {
             bytes memory item = _list[i];
 
             uint256 listPtr;
-            assembly { listPtr := add(item, 0x20)}
+            assembly {
+                listPtr := add(item, 0x20)
+            }
 
             _memcpy(flattenedPtr, listPtr, item.length);
             flattenedPtr += _list[i].length;

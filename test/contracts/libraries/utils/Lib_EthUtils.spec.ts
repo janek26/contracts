@@ -1,10 +1,7 @@
-/* tslint:disable:no-empty */
-import { expect } from '../../../setup'
-
-/* External Imports */
-import { ethers } from 'hardhat'
-import { Contract, Signer, constants } from 'ethers'
 import { fromHexString, toHexString } from '@eth-optimism/core-utils'
+import { expect } from 'chai'
+import { Contract, Signer, constants } from 'ethers'
+import { ethers } from 'hardhat'
 
 // Leaving this here for now. If it's sufficiently useful we can throw it in core-utils.
 const getHexSlice = (
@@ -300,6 +297,7 @@ describe('Lib_EthUtils', () => {
     })
   })
 
+  // tslint:disable: no-empty
   describe('getCode(address)', () => {
     describe('when the contract does not exist', () => {})
 

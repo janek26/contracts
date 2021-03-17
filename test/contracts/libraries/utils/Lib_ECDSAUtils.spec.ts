@@ -1,4 +1,3 @@
-/* Internal Imports */
 import { Lib_ECDSAUtils_TEST_JSON } from '../../../data'
 import { runJsonTest } from '../../../helpers'
 

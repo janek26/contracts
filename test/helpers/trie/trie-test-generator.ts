@@ -1,8 +1,8 @@
+import { fromHexString, toHexString } from '@eth-optimism/core-utils'
+import { BaseTrie, SecureTrie } from 'merkle-patricia-tree'
+import { default as seedbytes } from 'random-bytes-seed'
 /* External Imports */
 import * as rlp from 'rlp'
-import { default as seedbytes } from 'random-bytes-seed'
-import { SecureTrie, BaseTrie } from 'merkle-patricia-tree'
-import { fromHexString, toHexString } from '@eth-optimism/core-utils'
 
 /* Internal Imports */
 import { NULL_BYTES32 } from '../constants'

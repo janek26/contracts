@@ -9,7 +9,6 @@ import { Lib_OVMCodec } from "../../libraries/codec/Lib_OVMCodec.sol";
  * @title iOVM_ECDSAContractAccount
  */
 interface iOVM_ECDSAContractAccount {
-
     /********************
      * Public Functions *
      ********************/

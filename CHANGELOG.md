@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.1.11
+
 - cleanup: ECDSAContractAccount
 - cleanup: Proxy_EOA
 - cleanup: StateManagerFactory
@@ -15,6 +16,7 @@
 - Move OVM_BondManager test into the right location
 
 ## v0.1.10
+
 Adds extensible ERC20Gateway and Improve CI.
 
 - dev: Apply linting to all test files

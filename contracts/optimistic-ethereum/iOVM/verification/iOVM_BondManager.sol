@@ -3,31 +3,44 @@ pragma solidity >0.5.0 <0.8.0;
 
 interface ERC20 {
     function transfer(address, uint256) external returns (bool);
-    function transferFrom(address, address, uint256) external returns (bool);
+
+    function transferFrom(
+        address,
+        address,
+        uint256
+    ) external returns (bool);
 }
 
 /// All the errors which may be encountered on the bond manager
 library Errors {
     string constant ERC20_ERR = "BondManager: Could not post bond";
-    string constant ALREADY_FINALIZED = "BondManager: Fraud proof for this pre-state root has already been finalized";
-    string constant SLASHED = "BondManager: Cannot finalize withdrawal, you probably got slashed";
+    string constant ALREADY_FINALIZED =
+        "BondManager: Fraud proof for this pre-state root has already been finalized";
+    string constant SLASHED =
+        "BondManager: Cannot finalize withdrawal, you probably got slashed";
     string constant WRONG_STATE = "BondManager: Wrong bond state for proposer";
-    string constant CANNOT_CLAIM = "BondManager: Cannot claim yet. Dispute must be finalized first";
+    string constant CANNOT_CLAIM =
+        "BondManager: Cannot claim yet. Dispute must be finalized first";
 
-    string constant WITHDRAWAL_PENDING = "BondManager: Withdrawal already pending";
-    string constant TOO_EARLY = "BondManager: Too early to finalize your withdrawal";
+    string constant WITHDRAWAL_PENDING =
+        "BondManager: Withdrawal already pending";
+    string constant TOO_EARLY =
+        "BondManager: Too early to finalize your withdrawal";
 
-    string constant ONLY_TRANSITIONER = "BondManager: Only the transitioner for this pre-state root may call this function";
-    string constant ONLY_FRAUD_VERIFIER = "BondManager: Only the fraud verifier may call this function";
-    string constant ONLY_STATE_COMMITMENT_CHAIN = "BondManager: Only the state commitment chain may call this function";
-    string constant WAIT_FOR_DISPUTES = "BondManager: Wait for other potential disputes";
+    string constant ONLY_TRANSITIONER =
+        "BondManager: Only the transitioner for this pre-state root may call this function";
+    string constant ONLY_FRAUD_VERIFIER =
+        "BondManager: Only the fraud verifier may call this function";
+    string constant ONLY_STATE_COMMITMENT_CHAIN =
+        "BondManager: Only the state commitment chain may call this function";
+    string constant WAIT_FOR_DISPUTES =
+        "BondManager: Wait for other potential disputes";
 }
 
 /**
  * @title iOVM_BondManager
  */
 interface iOVM_BondManager {
-
     /*******************
      * Data Structures *
      *******************/
@@ -69,7 +82,6 @@ interface iOVM_BondManager {
         mapping(address => uint256) gasSpent;
     }
 
-
     /********************
      * Public Functions *
      ********************/
@@ -93,16 +105,12 @@ interface iOVM_BondManager {
 
     function finalizeWithdrawal() external;
 
-    function claim(
-        address _who
-    ) external;
+    function claim(address _who) external;
 
-    function isCollateralized(
-        address _who
-    ) external view returns (bool);
+    function isCollateralized(address _who) external view returns (bool);
 
-    function getGasSpent(
-        bytes32 _preStateRoot,
-        address _who
-    ) external view returns (uint256);
+    function getGasSpent(bytes32 _preStateRoot, address _who)
+        external
+        view
+        returns (uint256);
 }

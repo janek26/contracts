@@ -1,25 +1,22 @@
-import { expect } from '../../../../setup'
-
-/* External Imports */
-import { ethers } from 'hardhat'
-import { Signer, ContractFactory, Contract, BigNumber } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
 import { remove0x, toHexString } from '@eth-optimism/core-utils'
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { BigNumber, Contract, ContractFactory, Signer } from 'ethers'
+import { keccak256 } from 'ethers/lib/utils'
+import { ethers } from 'hardhat'
 
-/* Internal Imports */
 import {
-  makeAddressManager,
-  setProxyTarget,
+  DUMMY_BATCH_HEADERS,
+  DUMMY_BATCH_PROOFS,
   NON_NULL_BYTES32,
   NON_ZERO_ADDRESS,
   NULL_BYTES32,
-  DUMMY_BATCH_HEADERS,
-  DUMMY_BATCH_PROOFS,
   TrieTestGenerator,
   getNextBlockNumber,
   getXDomainCalldata,
+  makeAddressManager,
+  setProxyTarget,
 } from '../../../../helpers'
-import { keccak256 } from 'ethers/lib/utils'
 
 const deployProxyXDomainMessenger = async (
   addressManager: Contract,

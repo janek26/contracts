@@ -5,22 +5,15 @@ contract Helper_SimpleProxy {
     address internal owner;
     address internal target;
 
-    constructor()
-    {
+    constructor() {
         owner = msg.sender;
     }
 
-    fallback()
-        external
-    {
+    fallback() external {
         makeExternalCall(target, msg.data);
     }
 
-    function setTarget(
-        address _target
-    )
-        public
-    {
+    function setTarget(address _target) public {
         if (msg.sender == owner) {
             target = _target;
         } else {
@@ -28,10 +21,7 @@ contract Helper_SimpleProxy {
         }
     }
 
-    function makeExternalCall(
-        address _target,
-        bytes memory _calldata
-    )
+    function makeExternalCall(address _target, bytes memory _calldata)
         internal
     {
         (bool success, bytes memory returndata) = _target.call(_calldata);

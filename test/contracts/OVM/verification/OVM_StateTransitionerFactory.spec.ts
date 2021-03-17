@@ -1,15 +1,12 @@
-import { expect } from '../../../setup'
-
-/* External Imports */
+import { expect } from 'chai'
+import { Contract, ContractFactory, constants } from 'ethers'
 import { ethers } from 'hardhat'
-import { ContractFactory, Contract, constants } from 'ethers'
 
-/* Internal Imports */
 import {
-  makeAddressManager,
   DUMMY_OVM_TRANSACTIONS,
   NULL_BYTES32,
   hashTransaction,
+  makeAddressManager,
 } from '../../../helpers'
 
 const DUMMY_HASH = hashTransaction(DUMMY_OVM_TRANSACTIONS[0])

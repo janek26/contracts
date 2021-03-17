@@ -1,10 +1,9 @@
-import { expect } from '../../../setup'
-
+import { remove0x } from '@eth-optimism/core-utils'
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory, Wallet, constants } from 'ethers'
 /* External Imports */
 import { ethers, waffle } from 'hardhat'
-import { ContractFactory, Contract, Wallet, constants } from 'ethers'
-import { MockContract, smockit } from '@eth-optimism/smock'
-import { remove0x } from '@eth-optimism/core-utils'
 
 /* Internal Imports */
 import { decodeSolidityError } from '../../../helpers'

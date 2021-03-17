@@ -5,15 +5,15 @@ pragma solidity >0.5.0 <0.8.0;
 import { iOVM_BondManager } from "../../iOVM/verification/iOVM_BondManager.sol";
 
 /* Contract Imports */
-import { Lib_AddressResolver } from "../../libraries/resolver/Lib_AddressResolver.sol";
+import {
+    Lib_AddressResolver
+} from "../../libraries/resolver/Lib_AddressResolver.sol";
 
 /**
  * @title mockOVM_BondManager
  */
 contract mockOVM_BondManager is iOVM_BondManager, Lib_AddressResolver {
-    constructor(
-        address _libAddressManager
-    )
+    constructor(address _libAddressManager)
         Lib_AddressResolver(_libAddressManager)
     {}
 
@@ -22,51 +22,27 @@ contract mockOVM_BondManager is iOVM_BondManager, Lib_AddressResolver {
         bytes32 _txHash,
         address _who,
         uint256 _gasSpent
-    )
-        override
-        public
-    {}
+    ) public override {}
 
     function finalize(
         bytes32 _preStateRoot,
         address _publisher,
         uint256 _timestamp
-    )
-        override
-        public
-    {}
+    ) public override {}
 
-    function deposit()
-        override
-        public
-    {}
+    function deposit() public override {}
 
-    function startWithdrawal()
-        override
-        public
-    {}
+    function startWithdrawal() public override {}
 
-    function finalizeWithdrawal()
-        override
-        public
-    {}
+    function finalizeWithdrawal() public override {}
 
-    function claim(
-        address _who
-    )
-        override
-        public
-    {}
+    function claim(address _who) public override {}
 
-    function isCollateralized(
-        address _who
-    )
-        override
+    function isCollateralized(address _who)
         public
         view
-        returns (
-            bool
-        )
+        override
+        returns (bool)
     {
         // Only authenticate sequencer to submit state root batches.
         return _who == resolve("OVM_Proposer");
@@ -75,14 +51,7 @@ contract mockOVM_BondManager is iOVM_BondManager, Lib_AddressResolver {
     function getGasSpent(
         bytes32, // _preStateRoot,
         address // _who
-    )
-        override
-        public
-        pure 
-        returns (
-            uint256
-        )
-    {
+    ) public pure override returns (uint256) {
         return 0;
     }
 }

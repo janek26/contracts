@@ -12,7 +12,6 @@ import { iOVM_StateTransitioner } from "./iOVM_StateTransitioner.sol";
  * @title iOVM_FraudVerifier
  */
 interface iOVM_FraudVerifier {
-
     /**********
      * Events *
      **********/
@@ -31,13 +30,14 @@ interface iOVM_FraudVerifier {
         address _who
     );
 
-
     /***************************************
      * Public Functions: Transition Status *
      ***************************************/
 
-    function getStateTransitioner(bytes32 _preStateRoot, bytes32 _txHash) external view returns (iOVM_StateTransitioner _transitioner);
-
+    function getStateTransitioner(bytes32 _preStateRoot, bytes32 _txHash)
+        external
+        view
+        returns (iOVM_StateTransitioner _transitioner);
 
     /****************************************
      * Public Functions: Fraud Verification *

@@ -1,18 +1,17 @@
-import { expect } from '../../../setup'
-import { deployContractCode } from '../../../helpers/utils'
-
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory, Signer } from 'ethers'
 /* External Imports */
 import { ethers } from 'hardhat'
-import { Contract, ContractFactory, Signer } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
 
 /* Internal Imports */
 import {
-  makeAddressManager,
-  NON_ZERO_ADDRESS,
-  NON_NULL_BYTES32,
   GasMeasurement,
+  NON_NULL_BYTES32,
+  NON_ZERO_ADDRESS,
+  makeAddressManager,
 } from '../../../helpers'
+import { deployContractCode } from '../../../helpers/utils'
 
 const DUMMY_GASMETERCONFIG = {
   minTransactionGasLimit: 0,

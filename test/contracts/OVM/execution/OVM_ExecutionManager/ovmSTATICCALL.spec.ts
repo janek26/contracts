@@ -1,12 +1,12 @@
 /* Internal Imports */
 import {
-  ExecutionManagerTestRunner,
-  TestDefinition,
-  OVM_TX_GAS_LIMIT,
-  NULL_BYTES32,
-  NON_NULL_BYTES32,
-  REVERT_FLAGS,
   DUMMY_BYTECODE,
+  ExecutionManagerTestRunner,
+  NON_NULL_BYTES32,
+  NULL_BYTES32,
+  OVM_TX_GAS_LIMIT,
+  REVERT_FLAGS,
+  TestDefinition,
   getStorageXOR,
 } from '../../../../helpers'
 

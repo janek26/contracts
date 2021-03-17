@@ -1,9 +1,9 @@
-import { expect } from '../../../setup'
-
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory } from 'ethers'
 /* External Imports */
 import { ethers } from 'hardhat'
-import { ContractFactory, Contract } from 'ethers'
-import { MockContract, smockit } from '@eth-optimism/smock'
+
 import { NON_ZERO_ADDRESS } from '../../../helpers/constants'
 
 const callPrecompileStatic = async (

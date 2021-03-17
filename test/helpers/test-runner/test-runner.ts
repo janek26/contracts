@@ -1,44 +1,41 @@
-import { expect } from '../../setup'
-
-/* External Imports */
+import { ModifiableContract, smockit, smoddit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { BigNumber, Contract, ContractFactory } from 'ethers'
 import { ethers } from 'hardhat'
-import { Contract, BigNumber, ContractFactory } from 'ethers'
 import { cloneDeep, merge } from 'lodash'
-import { smoddit, smockit, ModifiableContract } from '@eth-optimism/smock'
 
-/* Internal Imports */
+import { getStorageXOR } from '../'
+import { REVERT_FLAGS, encodeRevertData } from '../codec'
 import {
-  TestDefinition,
+  NON_NULL_BYTES32,
+  NULL_BYTES32,
+  OVM_TX_GAS_LIMIT,
+  RUN_OVM_TEST_GAS,
+} from '../constants'
+import { UNSAFE_BYTECODE } from '../dummy'
+import {
   ParsedTestStep,
+  TestDefinition,
   TestParameter,
   TestStep,
   TestStep_CALL,
   TestStep_Run,
   isRevertFlagError,
-  isTestStep_SSTORE,
-  isTestStep_SLOAD,
   isTestStep_CALL,
   isTestStep_CREATE,
   isTestStep_CREATE2,
   isTestStep_CREATEEOA,
   isTestStep_Context,
-  isTestStep_evm,
-  isTestStep_Run,
-  isTestStep_EXTCODESIZE,
-  isTestStep_EXTCODEHASH,
   isTestStep_EXTCODECOPY,
+  isTestStep_EXTCODEHASH,
+  isTestStep_EXTCODESIZE,
   isTestStep_REVERT,
+  isTestStep_Run,
   isTestStep_SETNONCE,
+  isTestStep_SLOAD,
+  isTestStep_SSTORE,
+  isTestStep_evm,
 } from './test.types'
-import { encodeRevertData, REVERT_FLAGS } from '../codec'
-import {
-  OVM_TX_GAS_LIMIT,
-  RUN_OVM_TEST_GAS,
-  NON_NULL_BYTES32,
-  NULL_BYTES32,
-} from '../constants'
-import { getStorageXOR } from '../'
-import { UNSAFE_BYTECODE } from '../dummy'
 
 export class ExecutionManagerTestRunner {
   private snapshot: string

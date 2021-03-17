@@ -6,7 +6,6 @@ pragma experimental ABIEncoderV2;
  * @title Lib_ErrorUtils
  */
 library Lib_ErrorUtils {
-
     /**********************
      * Internal Functions *
      **********************/
@@ -18,18 +17,11 @@ library Lib_ErrorUtils {
      * @param _reason Reason for the reversion.
      * @return Standard solidity revert data for the given reason.
      */
-    function encodeRevertString(
-        string memory _reason
-    )
+    function encodeRevertString(string memory _reason)
         internal
         pure
-        returns (
-            bytes memory
-        )
+        returns (bytes memory)
     {
-        return abi.encodeWithSignature(
-            "Error(string)",
-            _reason
-        );
+        return abi.encodeWithSignature("Error(string)", _reason);
     }
 }

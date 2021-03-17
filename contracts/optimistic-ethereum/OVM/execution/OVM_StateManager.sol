@@ -14,34 +14,35 @@ import { iOVM_StateManager } from "../../iOVM/execution/iOVM_StateManager.sol";
  * the Execution Manager and State Transitioner. It runs on L1 during the setup and execution of a fraud proof.
  * The same logic runs on L2, but has been implemented as a precompile in the L2 go-ethereum client
  * (see https://github.com/ethereum-optimism/go-ethereum/blob/master/core/vm/ovm_state_manager.go).
- * 
+ *
  * Compiler used: solc
  * Runtime target: EVM
  */
 contract OVM_StateManager is iOVM_StateManager {
-
     /*************
      * Constants *
      *************/
 
-    bytes32 constant internal EMPTY_ACCOUNT_STORAGE_ROOT = 0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421;
-    bytes32 constant internal EMPTY_ACCOUNT_CODE_HASH =    0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
-    bytes32 constant internal STORAGE_XOR_VALUE =          0xFEEDFACECAFEBEEFFEEDFACECAFEBEEFFEEDFACECAFEBEEFFEEDFACECAFEBEEF;
-
+    bytes32 internal constant EMPTY_ACCOUNT_STORAGE_ROOT =
+        0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421;
+    bytes32 internal constant EMPTY_ACCOUNT_CODE_HASH =
+        0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+    bytes32 internal constant STORAGE_XOR_VALUE =
+        0xFEEDFACECAFEBEEFFEEDFACECAFEBEEFFEEDFACECAFEBEEFFEEDFACECAFEBEEF;
 
     /*************
      * Variables *
      *************/
 
-    address override public owner;
-    address override public ovmExecutionManager;
-    mapping (address => Lib_OVMCodec.Account) internal accounts;
-    mapping (address => mapping (bytes32 => bytes32)) internal contractStorage;
-    mapping (address => mapping (bytes32 => bool)) internal verifiedContractStorage;
-    mapping (bytes32 => ItemState) internal itemStates;
+    address public override owner;
+    address public override ovmExecutionManager;
+    mapping(address => Lib_OVMCodec.Account) internal accounts;
+    mapping(address => mapping(bytes32 => bytes32)) internal contractStorage;
+    mapping(address => mapping(bytes32 => bool))
+        internal verifiedContractStorage;
+    mapping(bytes32 => ItemState) internal itemStates;
     uint256 internal totalUncommittedAccounts;
     uint256 internal totalUncommittedContractStorage;
-
 
     /***************
      * Constructor *
@@ -50,20 +51,16 @@ contract OVM_StateManager is iOVM_StateManager {
     /**
      * @param _owner Address of the owner of this contract.
      */
-    constructor(
-        address _owner
-    )
-    {
+    constructor(address _owner) {
         owner = _owner;
     }
-
 
     /**********************
      * Function Modifiers *
      **********************/
 
     /**
-     * Simple authentication, this contract should only be accessible to the owner (which is expected to be the State Transitioner during `PRE_EXECUTION` 
+     * Simple authentication, this contract should only be accessible to the owner (which is expected to be the State Transitioner during `PRE_EXECUTION`
      * or the OVM_ExecutionManager during transaction execution.
      */
     modifier authenticated() {
@@ -84,15 +81,11 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address to check.
      * @return Whether or not the address can modify this contract.
      */
-    function isAuthenticated(
-        address _address
-    )
-        override
+    function isAuthenticated(address _address)
         public
         view
-        returns (
-            bool
-        )
+        override
+        returns (bool)
     {
         return (_address == owner || _address == ovmExecutionManager);
     }
@@ -101,11 +94,9 @@ contract OVM_StateManager is iOVM_StateManager {
      * Sets the address of the OVM_ExecutionManager.
      * @param _ovmExecutionManager Address of the OVM_ExecutionManager.
      */
-    function setExecutionManager(
-        address _ovmExecutionManager
-    )
-        override
+    function setExecutionManager(address _ovmExecutionManager)
         public
+        override
         authenticated
     {
         ovmExecutionManager = _ovmExecutionManager;
@@ -116,12 +107,9 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to insert.
      * @param _account Account to insert for the given address.
      */
-    function putAccount(
-        address _address,
-        Lib_OVMCodec.Account memory _account
-    )
-        override
+    function putAccount(address _address, Lib_OVMCodec.Account memory _account)
         public
+        override
         authenticated
     {
         accounts[_address] = _account;
@@ -131,13 +119,7 @@ contract OVM_StateManager is iOVM_StateManager {
      * Marks an account as empty.
      * @param _address Address of the account to mark.
      */
-    function putEmptyAccount(
-        address _address
-    )
-        override
-        public
-        authenticated
-    {
+    function putEmptyAccount(address _address) public override authenticated {
         Lib_OVMCodec.Account storage account = accounts[_address];
         account.storageRoot = EMPTY_ACCOUNT_STORAGE_ROOT;
         account.codeHash = EMPTY_ACCOUNT_CODE_HASH;
@@ -148,15 +130,11 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to retrieve.
      * @return Account for the given address.
      */
-    function getAccount(
-        address _address
-    )
-        override
+    function getAccount(address _address)
         public
         view
-        returns (
-            Lib_OVMCodec.Account memory
-        )
+        override
+        returns (Lib_OVMCodec.Account memory)
     {
         return accounts[_address];
     }
@@ -166,16 +144,7 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to check.
      * @return Whether or not the state has the account.
      */
-    function hasAccount(
-        address _address
-    )
-        override
-        public
-        view
-        returns (
-            bool
-        )
-    {
+    function hasAccount(address _address) public view override returns (bool) {
         return accounts[_address].codeHash != bytes32(0);
     }
 
@@ -184,20 +153,14 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to check.
      * @return Whether or not the state has the empty account.
      */
-    function hasEmptyAccount(
-        address _address
-    )
-        override
+    function hasEmptyAccount(address _address)
         public
         view
-        returns (
-            bool
-        )
+        override
+        returns (bool)
     {
-        return (
-            accounts[_address].codeHash == EMPTY_ACCOUNT_CODE_HASH
-            && accounts[_address].nonce == 0
-        );
+        return (accounts[_address].codeHash == EMPTY_ACCOUNT_CODE_HASH &&
+            accounts[_address].nonce == 0);
     }
 
     /**
@@ -205,12 +168,9 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to modify.
      * @param _nonce New account nonce.
      */
-    function setAccountNonce(
-        address _address,
-        uint256 _nonce
-    )
-        override
+    function setAccountNonce(address _address, uint256 _nonce)
         public
+        override
         authenticated
     {
         accounts[_address].nonce = _nonce;
@@ -221,15 +181,11 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to access.
      * @return Nonce of the account.
      */
-    function getAccountNonce(
-        address _address
-    )
-        override
+    function getAccountNonce(address _address)
         public
         view
-        returns (
-            uint256
-        )
+        override
+        returns (uint256)
     {
         return accounts[_address].nonce;
     }
@@ -239,15 +195,11 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to access.
      * @return Corresponding Ethereum address.
      */
-    function getAccountEthAddress(
-        address _address
-    )
-        override
+    function getAccountEthAddress(address _address)
         public
         view
-        returns (
-            address
-        )
+        override
+        returns (address)
     {
         return accounts[_address].ethAddress;
     }
@@ -257,15 +209,11 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to access.
      * @return Corresponding storage root.
      */
-    function getAccountStorageRoot(
-        address _address
-    )
-        override
+    function getAccountStorageRoot(address _address)
         public
         view
-        returns (
-            bytes32
-        )
+        override
+        returns (bytes32)
     {
         return accounts[_address].storageRoot;
     }
@@ -274,11 +222,9 @@ contract OVM_StateManager is iOVM_StateManager {
      * Initializes a pending account (during CREATE or CREATE2) with the default values.
      * @param _address Address of the account to initialize.
      */
-    function initPendingAccount(
-        address _address
-    )
-        override
+    function initPendingAccount(address _address)
         public
+        override
         authenticated
     {
         Lib_OVMCodec.Account storage account = accounts[_address];
@@ -298,11 +244,7 @@ contract OVM_StateManager is iOVM_StateManager {
         address _address,
         address _ethAddress,
         bytes32 _codeHash
-    )
-        override
-        public
-        authenticated
-    {
+    ) public override authenticated {
         Lib_OVMCodec.Account storage account = accounts[_address];
         account.ethAddress = _ethAddress;
         account.codeHash = _codeHash;
@@ -313,20 +255,14 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to check.
      * @return Whether or not the account was already loaded.
      */
-    function testAndSetAccountLoaded(
-        address _address
-    )
-        override
+    function testAndSetAccountLoaded(address _address)
         public
+        override
         authenticated
-        returns (
-            bool
-        )
+        returns (bool)
     {
-        return _testAndSetItemState(
-            _getItemHash(_address),
-            ItemState.ITEM_LOADED
-        );
+        return
+            _testAndSetItemState(_getItemHash(_address), ItemState.ITEM_LOADED);
     }
 
     /**
@@ -334,20 +270,17 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to check.
      * @return Whether or not the account was already modified.
      */
-    function testAndSetAccountChanged(
-        address _address
-    )
-        override
+    function testAndSetAccountChanged(address _address)
         public
+        override
         authenticated
-        returns (
-            bool
-        )
+        returns (bool)
     {
-        return _testAndSetItemState(
-            _getItemHash(_address),
-            ItemState.ITEM_CHANGED
-        );
+        return
+            _testAndSetItemState(
+                _getItemHash(_address),
+                ItemState.ITEM_CHANGED
+            );
     }
 
     /**
@@ -355,15 +288,11 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address of the account to commit.
      * @return Whether or not the account was committed.
      */
-    function commitAccount(
-        address _address
-    )
-        override
+    function commitAccount(address _address)
         public
+        override
         authenticated
-        returns (
-            bool
-        )
+        returns (bool)
     {
         bytes32 item = _getItemHash(_address);
         if (itemStates[item] != ItemState.ITEM_CHANGED) {
@@ -379,11 +308,7 @@ contract OVM_StateManager is iOVM_StateManager {
     /**
      * Increments the total number of uncommitted accounts.
      */
-    function incrementTotalUncommittedAccounts()
-        override
-        public
-        authenticated
-    {
+    function incrementTotalUncommittedAccounts() public override authenticated {
         totalUncommittedAccounts += 1;
     }
 
@@ -392,12 +317,10 @@ contract OVM_StateManager is iOVM_StateManager {
      * @return Total uncommitted accounts.
      */
     function getTotalUncommittedAccounts()
-        override
         public
         view
-        returns (
-            uint256
-        )
+        override
+        returns (uint256)
     {
         return totalUncommittedAccounts;
     }
@@ -407,15 +330,11 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address to check.
      * @return Whether or not the account was changed.
      */
-    function wasAccountChanged(
-        address _address
-    )
-        override
+    function wasAccountChanged(address _address)
         public
         view
-        returns (
-            bool
-        )
+        override
+        returns (bool)
     {
         bytes32 item = _getItemHash(_address);
         return itemStates[item] >= ItemState.ITEM_CHANGED;
@@ -426,20 +345,15 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address to check.
      * @return Whether or not the account was committed.
      */
-    function wasAccountCommitted(
-        address _address
-    )
-        override
+    function wasAccountCommitted(address _address)
         public
         view
-        returns (
-            bool
-        )
+        override
+        returns (bool)
     {
         bytes32 item = _getItemHash(_address);
         return itemStates[item] >= ItemState.ITEM_COMMITTED;
     }
-
 
     /************************************
      * Public Functions: Storage Access *
@@ -455,11 +369,7 @@ contract OVM_StateManager is iOVM_StateManager {
         address _contract,
         bytes32 _key,
         bytes32 _value
-    )
-        override
-        public
-        authenticated
-    {
+    ) public override authenticated {
         // A hilarious optimization. `SSTORE`ing a value of `bytes32(0)` is common enough that it's
         // worth populating this with a non-zero value in advance (during the fraud proof
         // initialization phase) to cut the execution-time cost down to 5000 gas.
@@ -481,22 +391,17 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _key 32 byte storage slot key.
      * @return 32 byte storage slot value.
      */
-    function getContractStorage(
-        address _contract,
-        bytes32 _key
-    )
-        override
+    function getContractStorage(address _contract, bytes32 _key)
         public
         view
-        returns (
-            bytes32
-        )
+        override
+        returns (bytes32)
     {
         // Storage XOR system doesn't work for newly created contracts that haven't set this
         // storage slot value yet.
         if (
-            verifiedContractStorage[_contract][_key] == false
-            && accounts[_contract].isFresh
+            verifiedContractStorage[_contract][_key] == false &&
+            accounts[_contract].isFresh
         ) {
             return bytes32(0);
         }
@@ -511,18 +416,15 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _key 32 byte storage slot key.
      * @return Whether or not the key was set in the state.
      */
-    function hasContractStorage(
-        address _contract,
-        bytes32 _key
-    )
-        override
+    function hasContractStorage(address _contract, bytes32 _key)
         public
         view
-        returns (
-            bool
-        )
+        override
+        returns (bool)
     {
-        return verifiedContractStorage[_contract][_key] || accounts[_contract].isFresh;
+        return
+            verifiedContractStorage[_contract][_key] ||
+            accounts[_contract].isFresh;
     }
 
     /**
@@ -531,21 +433,17 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _key 32 byte storage slot key.
      * @return Whether or not the slot was already loaded.
      */
-    function testAndSetContractStorageLoaded(
-        address _contract,
-        bytes32 _key
-    )
-        override
+    function testAndSetContractStorageLoaded(address _contract, bytes32 _key)
         public
+        override
         authenticated
-        returns (
-            bool
-        )
+        returns (bool)
     {
-        return _testAndSetItemState(
-            _getItemHash(_contract, _key),
-            ItemState.ITEM_LOADED
-        );
+        return
+            _testAndSetItemState(
+                _getItemHash(_contract, _key),
+                ItemState.ITEM_LOADED
+            );
     }
 
     /**
@@ -554,21 +452,17 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _key 32 byte storage slot key.
      * @return Whether or not the slot was already modified.
      */
-    function testAndSetContractStorageChanged(
-        address _contract,
-        bytes32 _key
-    )
-        override
+    function testAndSetContractStorageChanged(address _contract, bytes32 _key)
         public
+        override
         authenticated
-        returns (
-            bool
-        )
+        returns (bool)
     {
-        return _testAndSetItemState(
-            _getItemHash(_contract, _key),
-            ItemState.ITEM_CHANGED
-        );
+        return
+            _testAndSetItemState(
+                _getItemHash(_contract, _key),
+                ItemState.ITEM_CHANGED
+            );
     }
 
     /**
@@ -577,16 +471,11 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _key 32 byte slot key to commit.
      * @return Whether or not the slot was committed.
      */
-    function commitContractStorage(
-        address _contract,
-        bytes32 _key
-    )
-        override
+    function commitContractStorage(address _contract, bytes32 _key)
         public
+        override
         authenticated
-        returns (
-            bool
-        )
+        returns (bool)
     {
         bytes32 item = _getItemHash(_contract, _key);
         if (itemStates[item] != ItemState.ITEM_CHANGED) {
@@ -603,8 +492,8 @@ contract OVM_StateManager is iOVM_StateManager {
      * Increments the total number of uncommitted storage slots.
      */
     function incrementTotalUncommittedContractStorage()
-        override
         public
+        override
         authenticated
     {
         totalUncommittedContractStorage += 1;
@@ -615,12 +504,10 @@ contract OVM_StateManager is iOVM_StateManager {
      * @return Total uncommitted storage slots.
      */
     function getTotalUncommittedContractStorage()
-        override
         public
         view
-        returns (
-            uint256
-        )
+        override
+        returns (uint256)
     {
         return totalUncommittedContractStorage;
     }
@@ -631,16 +518,11 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _key Key of the storage slot to check.
      * @return Whether or not the storage slot was changed.
      */
-    function wasContractStorageChanged(
-        address _contract,
-        bytes32 _key
-    )
-        override
+    function wasContractStorageChanged(address _contract, bytes32 _key)
         public
         view
-        returns (
-            bool
-        )
+        override
+        returns (bool)
     {
         bytes32 item = _getItemHash(_contract, _key);
         return itemStates[item] >= ItemState.ITEM_CHANGED;
@@ -652,21 +534,15 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _key Key of the storage slot to check.
      * @return Whether or not the storage slot was committed.
      */
-    function wasContractStorageCommitted(
-        address _contract,
-        bytes32 _key
-    )
-        override
+    function wasContractStorageCommitted(address _contract, bytes32 _key)
         public
         view
-        returns (
-            bool
-        )
+        override
+        returns (bool)
     {
         bytes32 item = _getItemHash(_contract, _key);
         return itemStates[item] >= ItemState.ITEM_COMMITTED;
     }
-
 
     /**********************
      * Internal Functions *
@@ -677,15 +553,7 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _address Address to generate a hash for.
      * @return Unique hash for the given address.
      */
-    function _getItemHash(
-        address _address
-    )
-        internal
-        pure
-        returns (
-            bytes32
-        )
-    {
+    function _getItemHash(address _address) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(_address));
     }
 
@@ -695,20 +563,12 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _key Key to generate a hash for.
      * @return Unique hash for the given pair.
      */
-    function _getItemHash(
-        address _contract,
-        bytes32 _key
-    )
+    function _getItemHash(address _contract, bytes32 _key)
         internal
         pure
-        returns (
-            bytes32
-        )
+        returns (bytes32)
     {
-        return keccak256(abi.encodePacked(
-            _contract,
-            _key
-        ));
+        return keccak256(abi.encodePacked(_contract, _key));
     }
 
     /**
@@ -718,14 +578,9 @@ contract OVM_StateManager is iOVM_StateManager {
      * @param _minItemState Minimum state that must be satisfied by the item.
      * @return Whether or not the item was already in the state.
      */
-    function _testAndSetItemState(
-        bytes32 _item,
-        ItemState _minItemState
-    )
+    function _testAndSetItemState(bytes32 _item, ItemState _minItemState)
         internal
-        returns (
-            bool
-        )
+        returns (bool)
     {
         bool wasItemState = itemStates[_item] >= _minItemState;
 

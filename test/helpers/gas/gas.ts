@@ -1,5 +1,5 @@
-import { ethers } from 'hardhat'
 import { Contract, Signer } from 'ethers'
+import { ethers } from 'hardhat'
 
 export class GasMeasurement {
   GasMeasurementContract: Contract

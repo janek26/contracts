@@ -1,31 +1,28 @@
-import { expect } from '../../../setup'
-
-/* External Imports */
-import { ethers } from 'hardhat'
-import { Signer, ContractFactory, Contract, BigNumber, constants } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
 import {
   AppendSequencerBatchParams,
   encodeAppendSequencerBatch,
   remove0x,
 } from '@eth-optimism/core-utils'
+import { MockContract, smockit } from '@eth-optimism/smock'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { expect } from 'chai'
+import { BigNumber, Contract, ContractFactory, Signer, constants } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
+import { ethers } from 'hardhat'
 import _ from 'lodash'
 
-/* Internal Imports */
 import {
-  makeAddressManager,
-  setProxyTarget,
-  FORCE_INCLUSION_PERIOD_SECONDS,
   FORCE_INCLUSION_PERIOD_BLOCKS,
-  setEthTime,
+  FORCE_INCLUSION_PERIOD_SECONDS,
   NON_ZERO_ADDRESS,
+  getBlockTime,
   getEthTime,
   getNextBlockNumber,
   increaseEthTime,
-  getBlockTime,
+  makeAddressManager,
   mineBlock,
+  setEthTime,
+  setProxyTarget,
 } from '../../../helpers'
 
 const ELEMENT_TEST_SIZES = [1, 2, 4, 8, 16]

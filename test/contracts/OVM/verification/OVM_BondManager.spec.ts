@@ -1,11 +1,8 @@
-import { expect } from '../../../setup'
+import { smockit, smoddit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { BigNumber, Contract, ethers } from 'ethers'
+import { ethers as deployer, waffle } from 'hardhat'
 
-/* External Imports */
-import { waffle, ethers as deployer } from 'hardhat'
-import { smoddit, smockit } from '@eth-optimism/smock'
-import { ethers, Contract, BigNumber } from 'ethers'
-
-/* Internal Imports */
 import { mineBlock } from '../../../helpers'
 
 describe('OVM_BondManager', () => {

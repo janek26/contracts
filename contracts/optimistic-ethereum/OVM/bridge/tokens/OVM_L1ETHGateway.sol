@@ -4,12 +4,20 @@ pragma solidity >0.5.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 /* Interface Imports */
-import { iOVM_L1ETHGateway } from "../../../iOVM/bridge/tokens/iOVM_L1ETHGateway.sol";
-import { iOVM_L2DepositedToken } from "../../../iOVM/bridge/tokens/iOVM_L2DepositedToken.sol";
+import {
+    iOVM_L1ETHGateway
+} from "../../../iOVM/bridge/tokens/iOVM_L1ETHGateway.sol";
+import {
+    iOVM_L2DepositedToken
+} from "../../../iOVM/bridge/tokens/iOVM_L2DepositedToken.sol";
 
 /* Library Imports */
-import { OVM_CrossDomainEnabled } from "../../../libraries/bridge/OVM_CrossDomainEnabled.sol";
-import { Lib_AddressResolver } from "../../../libraries/resolver/Lib_AddressResolver.sol";
+import {
+    OVM_CrossDomainEnabled
+} from "../../../libraries/bridge/OVM_CrossDomainEnabled.sol";
+import {
+    Lib_AddressResolver
+} from "../../../libraries/resolver/Lib_AddressResolver.sol";
 
 /**
  * @title OVM_L1ETHGateway
@@ -18,8 +26,11 @@ import { Lib_AddressResolver } from "../../../libraries/resolver/Lib_AddressReso
  * Compiler used: solc
  * Runtime target: EVM
  */
-contract OVM_L1ETHGateway is iOVM_L1ETHGateway, OVM_CrossDomainEnabled, Lib_AddressResolver {
-
+contract OVM_L1ETHGateway is
+    iOVM_L1ETHGateway,
+    OVM_CrossDomainEnabled,
+    Lib_AddressResolver
+{
     /********************
      * Public Constants *
      ********************/
@@ -40,10 +51,7 @@ contract OVM_L1ETHGateway is iOVM_L1ETHGateway, OVM_CrossDomainEnabled, Lib_Addr
      * @param _libAddressManager Address manager for this OE deployment
      * @param _ovmEth L2 OVM_ETH implementation of iOVM_DepositedToken
      */
-    constructor(
-        address _libAddressManager,
-        address _ovmEth
-    )
+    constructor(address _libAddressManager, address _ovmEth)
         OVM_CrossDomainEnabled(address(0)) // overridden in constructor code
         Lib_AddressResolver(_libAddressManager)
     {
@@ -55,21 +63,14 @@ contract OVM_L1ETHGateway is iOVM_L1ETHGateway, OVM_CrossDomainEnabled, Lib_Addr
      * Depositing *
      **************/
 
-    receive()
-        external
-        payable
-    {
+    receive() external payable {
         _initiateDeposit(msg.sender, msg.sender);
     }
 
     /**
      * @dev deposit an amount of the ETH to the caller's balance on L2
      */
-    function deposit() 
-        external
-        override
-        payable
-    {
+    function deposit() external payable override {
         _initiateDeposit(msg.sender, msg.sender);
     }
 
@@ -77,13 +78,7 @@ contract OVM_L1ETHGateway is iOVM_L1ETHGateway, OVM_CrossDomainEnabled, Lib_Addr
      * @dev deposit an amount of ETH to a recipients's balance on L2
      * @param _to L2 address to credit the withdrawal to
      */
-    function depositTo(
-        address _to
-    )
-        external
-        override
-        payable
-    {
+    function depositTo(address _to) external payable override {
         _initiateDeposit(msg.sender, _to);
     }
 
@@ -93,12 +88,7 @@ contract OVM_L1ETHGateway is iOVM_L1ETHGateway, OVM_CrossDomainEnabled, Lib_Addr
      * @param _from Account to pull the deposit from on L1
      * @param _to Account to give the deposit to on L2
      */
-    function _initiateDeposit(
-        address _from,
-        address _to
-    )
-        internal
-    {
+    function _initiateDeposit(address _from, address _to) internal {
         // Construct calldata for l2ETHGateway.finalizeDeposit(_to, _amount)
         bytes memory data =
             abi.encodeWithSelector(
@@ -108,11 +98,7 @@ contract OVM_L1ETHGateway is iOVM_L1ETHGateway, OVM_CrossDomainEnabled, Lib_Addr
             );
 
         // Send calldata into L2
-        sendCrossDomainMessage(
-            ovmEth,
-            data,
-            getFinalizeDepositL2Gas
-        );
+        sendCrossDomainMessage(ovmEth, data, getFinalizeDepositL2Gas);
 
         emit DepositInitiated(_from, _to, msg.value);
     }
@@ -129,10 +115,7 @@ contract OVM_L1ETHGateway is iOVM_L1ETHGateway, OVM_CrossDomainEnabled, Lib_Addr
      * @param _to L1 address to credit the withdrawal to
      * @param _amount Amount of the ETH to withdraw
      */
-    function finalizeWithdrawal(
-        address _to,
-        uint256 _amount
-    )
+    function finalizeWithdrawal(address _to, uint256 _amount)
         external
         override
         onlyFromCrossDomainAccount(ovmEth)
@@ -152,13 +135,11 @@ contract OVM_L1ETHGateway is iOVM_L1ETHGateway, OVM_CrossDomainEnabled, Lib_Addr
      * @param _to L1 address to transfer ETH to
      * @param _value Amount of ETH to send to
      */
-    function _safeTransferETH(
-        address _to,
-        uint256 _value
-    )
-        internal
-    {
-        (bool success, ) = _to.call{value: _value}(new bytes(0));
-        require(success, 'TransferHelper::safeTransferETH: ETH transfer failed');
+    function _safeTransferETH(address _to, uint256 _value) internal {
+        (bool success, ) = _to.call{ value: _value }(new bytes(0));
+        require(
+            success,
+            "TransferHelper::safeTransferETH: ETH transfer failed"
+        );
     }
 }

@@ -1,10 +1,10 @@
 /* Internal Imports */
 import {
-  ExecutionManagerTestRunner,
-  TestDefinition,
-  OVM_TX_GAS_LIMIT,
-  NON_NULL_BYTES32,
   DUMMY_BYTECODE,
+  ExecutionManagerTestRunner,
+  NON_NULL_BYTES32,
+  OVM_TX_GAS_LIMIT,
+  TestDefinition,
   VERIFIED_EMPTY_CONTRACT_HASH,
 } from '../../../../helpers'
 

@@ -1,23 +1,21 @@
-/* External Imports */
-import { ethers } from 'hardhat'
-import { Signer, ContractFactory, Contract } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
 import {
   AppendSequencerBatchParams,
   encodeAppendSequencerBatch,
 } from '@eth-optimism/core-utils'
+import { MockContract, smockit } from '@eth-optimism/smock'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract, ContractFactory, Signer } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
+import { ethers } from 'hardhat'
 import _ from 'lodash'
 
-/* Internal Imports */
 import {
-  makeAddressManager,
-  setProxyTarget,
-  FORCE_INCLUSION_PERIOD_SECONDS,
   FORCE_INCLUSION_PERIOD_BLOCKS,
+  FORCE_INCLUSION_PERIOD_SECONDS,
   getEthTime,
   getNextBlockNumber,
+  makeAddressManager,
+  setProxyTarget,
 } from '../../../helpers'
 
 // Still have some duplication from OVM_CanonicalTransactionChain.spec.ts, but it's so minimal that

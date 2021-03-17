@@ -1,16 +1,13 @@
-import { expect } from '../../../../setup'
-
-/* External Imports */
-import { ethers } from 'hardhat'
-import { Signer, ContractFactory, Contract, constants } from 'ethers'
 import {
-  smockit,
   MockContract,
-  smoddit,
   ModifiableContract,
+  smockit,
+  smoddit,
 } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory, Signer, constants } from 'ethers'
+import { ethers } from 'hardhat'
 
-/* Internal Imports */
 import { NON_ZERO_ADDRESS } from '../../../../helpers'
 
 const ERR_INVALID_MESSENGER = 'OVM_XCHAIN: messenger contract unauthenticated'
@@ -97,7 +94,7 @@ describe('OVM_L2DepositedERC20', () => {
       const aliceBalance = await OVM_L2DepositedERC20.balanceOf(
         await alice.getAddress()
       )
-      aliceBalance.should.equal(depositAmount)
+      expect(aliceBalance).to.equal(depositAmount)
     })
   })
 

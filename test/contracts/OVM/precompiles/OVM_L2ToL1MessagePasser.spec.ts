@@ -1,11 +1,10 @@
-import { expect } from '../../../setup'
-
+import { remove0x } from '@eth-optimism/core-utils'
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory } from 'ethers'
+import { keccak256 } from 'ethers/lib/utils'
 /* External Imports */
 import { ethers } from 'hardhat'
-import { ContractFactory, Contract } from 'ethers'
-import { MockContract, smockit } from '@eth-optimism/smock'
-import { remove0x } from '@eth-optimism/core-utils'
-import { keccak256 } from 'ethers/lib/utils'
 
 /* Internal Imports */
 import { NON_ZERO_ADDRESS } from '../../../helpers/constants'

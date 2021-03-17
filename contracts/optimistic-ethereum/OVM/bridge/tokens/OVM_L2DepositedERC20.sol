@@ -3,10 +3,14 @@ pragma solidity >0.5.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 /* Interface Imports */
-import { iOVM_L1TokenGateway } from "../../../iOVM/bridge/tokens/iOVM_L1TokenGateway.sol";
+import {
+    iOVM_L1TokenGateway
+} from "../../../iOVM/bridge/tokens/iOVM_L1TokenGateway.sol";
 
 /* Contract Imports */
-import { UniswapV2ERC20 } from "../../../libraries/standards/UniswapV2ERC20.sol";
+import {
+    UniswapV2ERC20
+} from "../../../libraries/standards/UniswapV2ERC20.sol";
 
 /* Library Imports */
 import { Abs_L2DepositedToken } from "./Abs_L2DepositedToken.sol";
@@ -24,7 +28,6 @@ import { Abs_L2DepositedToken } from "./Abs_L2DepositedToken.sol";
  * Runtime target: OVM
  */
 contract OVM_L2DepositedERC20 is Abs_L2DepositedToken, UniswapV2ERC20 {
-
     /***************
      * Constructor *
      ***************/
@@ -46,19 +49,13 @@ contract OVM_L2DepositedERC20 is Abs_L2DepositedToken, UniswapV2ERC20 {
     // When a withdrawal is initiated, we burn the withdrawer's funds to prevent subsequent L2 usage.
     function _handleInitiateWithdrawal(
         address, // _to,
-        uint _amount
-    )
-        internal
-        override
-    {
+        uint256 _amount
+    ) internal override {
         _burn(msg.sender, _amount);
     }
 
     // When a deposit is finalized, we credit the account on L2 with the same amount of tokens.
-    function _handleFinalizeDeposit(
-        address _to,
-        uint _amount
-    )
+    function _handleFinalizeDeposit(address _to, uint256 _amount)
         internal
         override
     {

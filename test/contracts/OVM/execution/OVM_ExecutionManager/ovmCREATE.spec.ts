@@ -1,19 +1,20 @@
 /* Internal Imports */
 import { constants } from 'ethers'
+
 import {
-  ExecutionManagerTestRunner,
-  TestDefinition,
-  OVM_TX_GAS_LIMIT,
-  NULL_BYTES32,
-  NON_NULL_BYTES32,
-  REVERT_FLAGS,
   DUMMY_BYTECODE,
-  UNSAFE_BYTECODE,
-  VERIFIED_EMPTY_CONTRACT_HASH,
   DUMMY_BYTECODE_BYTELEN,
   DUMMY_BYTECODE_HASH,
-  getStorageXOR,
+  ExecutionManagerTestRunner,
+  NON_NULL_BYTES32,
+  NULL_BYTES32,
+  OVM_TX_GAS_LIMIT,
+  REVERT_FLAGS,
+  TestDefinition,
+  UNSAFE_BYTECODE,
+  VERIFIED_EMPTY_CONTRACT_HASH,
   encodeSolidityError,
+  getStorageXOR,
 } from '../../../../helpers'
 
 const CREATED_CONTRACT_1 = '0x2bda4a99d5be88609d23b1e4ab5d1d34fb1c2feb'

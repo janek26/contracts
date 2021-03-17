@@ -1,6 +1,6 @@
+import { Contract } from 'ethers'
 /* External Imports */
 import { ethers } from 'hardhat'
-import { Contract } from 'ethers'
 
 export const setProxyTarget = async (
   AddressManager: Contract,

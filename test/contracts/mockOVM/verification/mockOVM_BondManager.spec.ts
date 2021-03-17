@@ -1,10 +1,7 @@
-import { expect } from '../../../setup'
-
-/* External Imports */
+import { expect } from 'chai'
+import { Contract, Signer } from 'ethers'
 import { ethers } from 'hardhat'
-import { Signer, Contract } from 'ethers'
 
-/* Internal Imports */
 import { makeAddressManager } from '../../../helpers'
 
 describe('mockOVM_BondManager', () => {

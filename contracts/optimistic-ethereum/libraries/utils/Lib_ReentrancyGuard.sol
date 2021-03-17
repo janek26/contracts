@@ -34,7 +34,7 @@ abstract contract Lib_ReentrancyGuard {
 
     uint256 private _status;
 
-    constructor () {
+    constructor() {
         _status = _NOT_ENTERED;
     }
 

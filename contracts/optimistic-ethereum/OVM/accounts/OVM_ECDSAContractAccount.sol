@@ -3,25 +3,30 @@ pragma solidity >0.5.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 /* Interface Imports */
-import { iOVM_ECDSAContractAccount } from "../../iOVM/accounts/iOVM_ECDSAContractAccount.sol";
+import {
+    iOVM_ECDSAContractAccount
+} from "../../iOVM/accounts/iOVM_ECDSAContractAccount.sol";
 
 /* Library Imports */
 import { Lib_OVMCodec } from "../../libraries/codec/Lib_OVMCodec.sol";
 import { Lib_ECDSAUtils } from "../../libraries/utils/Lib_ECDSAUtils.sol";
-import { Lib_SafeExecutionManagerWrapper } from "../../libraries/wrappers/Lib_SafeExecutionManagerWrapper.sol";
-import { Lib_SafeMathWrapper } from "../../libraries/wrappers/Lib_SafeMathWrapper.sol";
+import {
+    Lib_SafeExecutionManagerWrapper
+} from "../../libraries/wrappers/Lib_SafeExecutionManagerWrapper.sol";
+import {
+    Lib_SafeMathWrapper
+} from "../../libraries/wrappers/Lib_SafeMathWrapper.sol";
 
 /**
  * @title OVM_ECDSAContractAccount
  * @dev The ECDSA Contract Account can be used as the implementation for a ProxyEOA deployed by the
- * ovmCREATEEOA operation. It enables backwards compatibility with Ethereum's Layer 1, by 
+ * ovmCREATEEOA operation. It enables backwards compatibility with Ethereum's Layer 1, by
  * providing eth_sign and EIP155 formatted transaction encodings.
  *
  * Compiler used: solc
  * Runtime target: OVM
  */
 contract OVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
-
     /*************
      * Constants *
      *************/
@@ -29,8 +34,8 @@ contract OVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
     // TODO: should be the amount sufficient to cover the gas costs of all of the transactions up
     // to and including the CALL/CREATE which forms the entrypoint of the transaction.
     uint256 constant EXECUTION_VALIDATION_GAS_OVERHEAD = 25000;
-    address constant ETH_ERC20_ADDRESS = 0x4200000000000000000000000000000000000006;
-
+    address constant ETH_ERC20_ADDRESS =
+        0x4200000000000000000000000000000000000006;
 
     /********************
      * Public Functions *
@@ -52,32 +57,22 @@ contract OVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    )
-        override
-        public
-        returns (
-            bool,
-            bytes memory
-        )
-    {
-        bool isEthSign = _signatureType == Lib_OVMCodec.EOASignatureType.ETH_SIGNED_MESSAGE;
+    ) public override returns (bool, bytes memory) {
+        bool isEthSign =
+            _signatureType == Lib_OVMCodec.EOASignatureType.ETH_SIGNED_MESSAGE;
 
         // Address of this contract within the ovm (ovmADDRESS) should be the same as the
         // recovered address of the user who signed this message. This is how we manage to shim
         // account abstraction even though the user isn't a contract.
         // Need to make sure that the transaction nonce is right and bump it if so.
         Lib_SafeExecutionManagerWrapper.safeREQUIRE(
-            Lib_ECDSAUtils.recover(
-                _transaction,
-                isEthSign,
-                _v,
-                _r,
-                _s
-            ) == Lib_SafeExecutionManagerWrapper.safeADDRESS(),
+            Lib_ECDSAUtils.recover(_transaction, isEthSign, _v, _r, _s) ==
+                Lib_SafeExecutionManagerWrapper.safeADDRESS(),
             "Signature provided for EOA transaction execution is invalid."
         );
 
-        Lib_OVMCodec.EIP155Transaction memory decodedTx = Lib_OVMCodec.decodeEIP155Transaction(_transaction, isEthSign);
+        Lib_OVMCodec.EIP155Transaction memory decodedTx =
+            Lib_OVMCodec.decodeEIP155Transaction(_transaction, isEthSign);
 
         // Need to make sure that the transaction chainId is correct.
         Lib_SafeExecutionManagerWrapper.safeREQUIRE(
@@ -100,12 +95,18 @@ contract OVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
 
         // Transfer fee to relayer.
         address relayer = Lib_SafeExecutionManagerWrapper.safeCALLER();
-        uint256 fee = Lib_SafeMathWrapper.mul(decodedTx.gasLimit, decodedTx.gasPrice);
-        (bool success, ) = Lib_SafeExecutionManagerWrapper.safeCALL(
-            gasleft(),
-            ETH_ERC20_ADDRESS,
-            abi.encodeWithSignature("transfer(address,uint256)", relayer, fee)
-        );
+        uint256 fee =
+            Lib_SafeMathWrapper.mul(decodedTx.gasLimit, decodedTx.gasPrice);
+        (bool success, ) =
+            Lib_SafeExecutionManagerWrapper.safeCALL(
+                gasleft(),
+                ETH_ERC20_ADDRESS,
+                abi.encodeWithSignature(
+                    "transfer(address,uint256)",
+                    relayer,
+                    fee
+                )
+            );
         Lib_SafeExecutionManagerWrapper.safeREQUIRE(
             success == true,
             "Fee was not transferred to relayer."
@@ -113,10 +114,11 @@ contract OVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
 
         // Contract creations are signalled by sending a transaction to the zero address.
         if (decodedTx.to == address(0)) {
-            (address created, bytes memory revertData) = Lib_SafeExecutionManagerWrapper.safeCREATE(
-                decodedTx.gasLimit,
-                decodedTx.data
-            );
+            (address created, bytes memory revertData) =
+                Lib_SafeExecutionManagerWrapper.safeCREATE(
+                    decodedTx.gasLimit,
+                    decodedTx.data
+                );
 
             // Return true if the contract creation succeeded, false w/ revertData otherwise.
             if (created != address(0)) {
@@ -130,11 +132,12 @@ contract OVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
             // cases, but since this is a contract we'd end up bumping the nonce twice.
             Lib_SafeExecutionManagerWrapper.safeSETNONCE(decodedTx.nonce + 1);
 
-            return Lib_SafeExecutionManagerWrapper.safeCALL(
-                decodedTx.gasLimit,
-                decodedTx.to,
-                decodedTx.data
-            );
+            return
+                Lib_SafeExecutionManagerWrapper.safeCALL(
+                    decodedTx.gasLimit,
+                    decodedTx.to,
+                    decodedTx.data
+                );
         }
     }
 }

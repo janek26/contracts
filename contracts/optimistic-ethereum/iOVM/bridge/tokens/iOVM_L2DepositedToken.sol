@@ -6,7 +6,6 @@ pragma experimental ABIEncoderV2;
  * @title iOVM_L2DepositedToken
  */
 interface iOVM_L2DepositedToken {
-
     /**********
      * Events *
      **********/
@@ -17,35 +16,19 @@ interface iOVM_L2DepositedToken {
         uint256 _amount
     );
 
-    event DepositFinalized(
-        address indexed _to,
-        uint256 _amount
-    );    
-
+    event DepositFinalized(address indexed _to, uint256 _amount);
 
     /********************
      * Public Functions *
      ********************/
 
-    function withdraw(
-        uint _amount
-    )
-        external;
+    function withdraw(uint256 _amount) external;
 
-    function withdrawTo(
-        address _to,
-        uint _amount
-    )
-        external;
-
+    function withdrawTo(address _to, uint256 _amount) external;
 
     /*************************
      * Cross-chain Functions *
      *************************/
 
-    function finalizeDeposit(
-        address _to,
-        uint _amount
-    )
-        external;
+    function finalizeDeposit(address _to, uint256 _amount) external;
 }

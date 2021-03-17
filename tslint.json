@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/tslint",
   "extends": "@eth-optimism/dev/tslint.json",
   "rules": {
     "array-type": false,

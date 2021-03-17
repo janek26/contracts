@@ -7,27 +7,21 @@ import { Lib_RLPReader } from "../rlp/Lib_RLPReader.sol";
 import { Lib_RLPWriter } from "../rlp/Lib_RLPWriter.sol";
 import { Lib_BytesUtils } from "../utils/Lib_BytesUtils.sol";
 import { Lib_Bytes32Utils } from "../utils/Lib_Bytes32Utils.sol";
-import { Lib_SafeExecutionManagerWrapper } from "../../libraries/wrappers/Lib_SafeExecutionManagerWrapper.sol";
+import {
+    Lib_SafeExecutionManagerWrapper
+} from "../../libraries/wrappers/Lib_SafeExecutionManagerWrapper.sol";
 
 /**
  * @title Lib_OVMCodec
  */
 library Lib_OVMCodec {
-
     /*********
      * Enums *
      *********/
 
-    enum EOASignatureType {
-        EIP155_TRANSACTON,
-        ETH_SIGNED_MESSAGE
-    }
+    enum EOASignatureType { EIP155_TRANSACTON, ETH_SIGNED_MESSAGE }
 
-    enum QueueOrigin {
-        SEQUENCER_QUEUE,
-        L1TOL2_QUEUE
-    }
-
+    enum QueueOrigin { SEQUENCER_QUEUE, L1TOL2_QUEUE }
 
     /***********
      * Structs *
@@ -74,10 +68,10 @@ library Lib_OVMCodec {
 
     struct TransactionChainElement {
         bool isSequenced;
-        uint256 queueIndex;  // QUEUED TX ONLY
-        uint256 timestamp;   // SEQUENCER TX ONLY
+        uint256 queueIndex; // QUEUED TX ONLY
+        uint256 timestamp; // SEQUENCER TX ONLY
         uint256 blockNumber; // SEQUENCER TX ONLY
-        bytes txData;        // SEQUENCER TX ONLY
+        bytes txData; // SEQUENCER TX ONLY
     }
 
     struct QueueElement {
@@ -96,7 +90,6 @@ library Lib_OVMCodec {
         uint256 chainId;
     }
 
-
     /**********************
      * Internal Functions *
      **********************/
@@ -109,13 +102,7 @@ library Lib_OVMCodec {
     function decodeEIP155Transaction(
         bytes memory _transaction,
         bool _isEthSignedMessage
-    )
-        internal
-        pure
-        returns (
-            EIP155Transaction memory
-        )
-    {
+    ) internal pure returns (EIP155Transaction memory) {
         if (_isEthSignedMessage) {
             (
                 uint256 _nonce,
@@ -124,31 +111,35 @@ library Lib_OVMCodec {
                 uint256 _chainId,
                 address _to,
                 bytes memory _data
-            ) = abi.decode(
-                _transaction,
-                (uint256, uint256, uint256, uint256, address ,bytes)
-            );
-            return EIP155Transaction({
-                nonce: _nonce,
-                gasPrice: _gasPrice,
-                gasLimit: _gasLimit,
-                to: _to,
-                value: 0,
-                data: _data,
-                chainId: _chainId
-            });
+            ) =
+                abi.decode(
+                    _transaction,
+                    (uint256, uint256, uint256, uint256, address, bytes)
+                );
+            return
+                EIP155Transaction({
+                    nonce: _nonce,
+                    gasPrice: _gasPrice,
+                    gasLimit: _gasLimit,
+                    to: _to,
+                    value: 0,
+                    data: _data,
+                    chainId: _chainId
+                });
         } else {
-            Lib_RLPReader.RLPItem[] memory decoded = Lib_RLPReader.readList(_transaction);
+            Lib_RLPReader.RLPItem[] memory decoded =
+                Lib_RLPReader.readList(_transaction);
 
-            return EIP155Transaction({
-                nonce: Lib_RLPReader.readUint256(decoded[0]),
-                gasPrice: Lib_RLPReader.readUint256(decoded[1]),
-                gasLimit: Lib_RLPReader.readUint256(decoded[2]),
-                to: Lib_RLPReader.readAddress(decoded[3]),
-                value: Lib_RLPReader.readUint256(decoded[4]),
-                data: Lib_RLPReader.readBytes(decoded[5]),
-                chainId:  Lib_RLPReader.readUint256(decoded[6])
-            });
+            return
+                EIP155Transaction({
+                    nonce: Lib_RLPReader.readUint256(decoded[0]),
+                    gasPrice: Lib_RLPReader.readUint256(decoded[1]),
+                    gasLimit: Lib_RLPReader.readUint256(decoded[2]),
+                    to: Lib_RLPReader.readAddress(decoded[3]),
+                    value: Lib_RLPReader.readUint256(decoded[4]),
+                    data: Lib_RLPReader.readBytes(decoded[5]),
+                    chainId: Lib_RLPReader.readUint256(decoded[6])
+                });
         }
     }
 
@@ -157,23 +148,21 @@ library Lib_OVMCodec {
      * @param _transaction Compressed EIP155 transaction bytes.
      * @return Transaction parsed into a struct.
      */
-    function decompressEIP155Transaction(
-        bytes memory _transaction
-    )
+    function decompressEIP155Transaction(bytes memory _transaction)
         internal
-        returns (
-            EIP155Transaction memory
-        )
+        returns (EIP155Transaction memory)
     {
-        return EIP155Transaction({
-            gasLimit: Lib_BytesUtils.toUint24(_transaction, 0),
-            gasPrice: uint256(Lib_BytesUtils.toUint24(_transaction, 3)) * 1000000,
-            nonce: Lib_BytesUtils.toUint24(_transaction, 6),
-            to: Lib_BytesUtils.toAddress(_transaction, 9),
-            data: Lib_BytesUtils.slice(_transaction, 29),
-            chainId: Lib_SafeExecutionManagerWrapper.safeCHAINID(),
-            value: 0
-        });
+        return
+            EIP155Transaction({
+                gasLimit: Lib_BytesUtils.toUint24(_transaction, 0),
+                gasPrice: uint256(Lib_BytesUtils.toUint24(_transaction, 3)) *
+                    1000000,
+                nonce: Lib_BytesUtils.toUint24(_transaction, 6),
+                to: Lib_BytesUtils.toAddress(_transaction, 9),
+                data: Lib_BytesUtils.slice(_transaction, 29),
+                chainId: Lib_SafeExecutionManagerWrapper.safeCHAINID(),
+                value: 0
+            });
     }
 
     /**
@@ -185,22 +174,17 @@ library Lib_OVMCodec {
     function encodeEIP155Transaction(
         EIP155Transaction memory _transaction,
         bool _isEthSignedMessage
-    )
-        internal
-        pure
-        returns (
-            bytes memory
-        )
-    {
+    ) internal pure returns (bytes memory) {
         if (_isEthSignedMessage) {
-            return abi.encode(
-                _transaction.nonce,
-                _transaction.gasLimit,
-                _transaction.gasPrice,
-                _transaction.chainId,
-                _transaction.to,
-                _transaction.data
-            );
+            return
+                abi.encode(
+                    _transaction.nonce,
+                    _transaction.gasLimit,
+                    _transaction.gasPrice,
+                    _transaction.chainId,
+                    _transaction.to,
+                    _transaction.data
+                );
         } else {
             bytes[] memory raw = new bytes[](9);
 
@@ -208,15 +192,15 @@ library Lib_OVMCodec {
             raw[1] = Lib_RLPWriter.writeUint(_transaction.gasPrice);
             raw[2] = Lib_RLPWriter.writeUint(_transaction.gasLimit);
             if (_transaction.to == address(0)) {
-                raw[3] = Lib_RLPWriter.writeBytes('');
+                raw[3] = Lib_RLPWriter.writeBytes("");
             } else {
                 raw[3] = Lib_RLPWriter.writeAddress(_transaction.to);
             }
             raw[4] = Lib_RLPWriter.writeUint(0);
             raw[5] = Lib_RLPWriter.writeBytes(_transaction.data);
             raw[6] = Lib_RLPWriter.writeUint(_transaction.chainId);
-            raw[7] = Lib_RLPWriter.writeBytes(bytes(''));
-            raw[8] = Lib_RLPWriter.writeBytes(bytes(''));
+            raw[7] = Lib_RLPWriter.writeBytes(bytes(""));
+            raw[8] = Lib_RLPWriter.writeBytes(bytes(""));
 
             return Lib_RLPWriter.writeList(raw);
         }
@@ -227,24 +211,21 @@ library Lib_OVMCodec {
      * @param _transaction OVM transaction to encode.
      * @return Encoded transaction bytes.
      */
-    function encodeTransaction(
-        Transaction memory _transaction
-    )
+    function encodeTransaction(Transaction memory _transaction)
         internal
         pure
-        returns (
-            bytes memory
-        )
+        returns (bytes memory)
     {
-        return abi.encodePacked(
-            _transaction.timestamp,
-            _transaction.blockNumber,
-            _transaction.l1QueueOrigin,
-            _transaction.l1TxOrigin,
-            _transaction.entrypoint,
-            _transaction.gasLimit,
-            _transaction.data
-        );
+        return
+            abi.encodePacked(
+                _transaction.timestamp,
+                _transaction.blockNumber,
+                _transaction.l1QueueOrigin,
+                _transaction.l1TxOrigin,
+                _transaction.entrypoint,
+                _transaction.gasLimit,
+                _transaction.data
+            );
     }
 
     /**
@@ -252,14 +233,10 @@ library Lib_OVMCodec {
      * @param _transaction OVM transaction to encode.
      * @return Hashed transaction
      */
-    function hashTransaction(
-        Transaction memory _transaction
-    )
+    function hashTransaction(Transaction memory _transaction)
         internal
         pure
-        returns (
-            bytes32
-        )
+        returns (bytes32)
     {
         return keccak256(encodeTransaction(_transaction));
     }
@@ -269,21 +246,18 @@ library Lib_OVMCodec {
      * @param _in OVM account to convert.
      * @return Converted EVM account.
      */
-    function toEVMAccount(
-        Account memory _in
-    )
+    function toEVMAccount(Account memory _in)
         internal
         pure
-        returns (
-            EVMAccount memory
-        )
+        returns (EVMAccount memory)
     {
-        return EVMAccount({
-            nonce: _in.nonce,
-            balance: _in.balance,
-            storageRoot: _in.storageRoot,
-            codeHash: _in.codeHash
-        });
+        return
+            EVMAccount({
+                nonce: _in.nonce,
+                balance: _in.balance,
+                storageRoot: _in.storageRoot,
+                codeHash: _in.codeHash
+            });
     }
 
     /**
@@ -291,14 +265,10 @@ library Lib_OVMCodec {
      * @param _account Account state struct.
      * @return RLP-encoded account state.
      */
-    function encodeEVMAccount(
-        EVMAccount memory _account
-    )
+    function encodeEVMAccount(EVMAccount memory _account)
         internal
         pure
-        returns (
-            bytes memory
-        )
+        returns (bytes memory)
     {
         bytes[] memory raw = new bytes[](4);
 
@@ -306,16 +276,14 @@ library Lib_OVMCodec {
         // Lib_RLPWriter.writeList will reject fixed-size arrays. Assigning
         // index-by-index circumvents this issue.
         raw[0] = Lib_RLPWriter.writeBytes(
-            Lib_Bytes32Utils.removeLeadingZeros(
-                bytes32(_account.nonce)
-            )
+            Lib_Bytes32Utils.removeLeadingZeros(bytes32(_account.nonce))
         );
         raw[1] = Lib_RLPWriter.writeBytes(
-            Lib_Bytes32Utils.removeLeadingZeros(
-                bytes32(_account.balance)
-            )
+            Lib_Bytes32Utils.removeLeadingZeros(bytes32(_account.balance))
         );
-        raw[2] = Lib_RLPWriter.writeBytes(abi.encodePacked(_account.storageRoot));
+        raw[2] = Lib_RLPWriter.writeBytes(
+            abi.encodePacked(_account.storageRoot)
+        );
         raw[3] = Lib_RLPWriter.writeBytes(abi.encodePacked(_account.codeHash));
 
         return Lib_RLPWriter.writeList(raw);
@@ -326,23 +294,21 @@ library Lib_OVMCodec {
      * @param _encoded RLP-encoded account state.
      * @return Account state struct.
      */
-    function decodeEVMAccount(
-        bytes memory _encoded
-    )
+    function decodeEVMAccount(bytes memory _encoded)
         internal
         pure
-        returns (
-            EVMAccount memory
-        )
+        returns (EVMAccount memory)
     {
-        Lib_RLPReader.RLPItem[] memory accountState = Lib_RLPReader.readList(_encoded);
+        Lib_RLPReader.RLPItem[] memory accountState =
+            Lib_RLPReader.readList(_encoded);
 
-        return EVMAccount({
-            nonce: Lib_RLPReader.readUint256(accountState[0]),
-            balance: Lib_RLPReader.readUint256(accountState[1]),
-            storageRoot: Lib_RLPReader.readBytes32(accountState[2]),
-            codeHash: Lib_RLPReader.readBytes32(accountState[3])
-        });
+        return
+            EVMAccount({
+                nonce: Lib_RLPReader.readUint256(accountState[0]),
+                balance: Lib_RLPReader.readUint256(accountState[1]),
+                storageRoot: Lib_RLPReader.readBytes32(accountState[2]),
+                codeHash: Lib_RLPReader.readBytes32(accountState[3])
+            });
     }
 
     /**
@@ -350,22 +316,19 @@ library Lib_OVMCodec {
      * @param _batchHeader Header to hash.
      * @return Hash of the header.
      */
-    function hashBatchHeader(
-        Lib_OVMCodec.ChainBatchHeader memory _batchHeader
-    )
+    function hashBatchHeader(Lib_OVMCodec.ChainBatchHeader memory _batchHeader)
         internal
         pure
-        returns (
-            bytes32
-        )
+        returns (bytes32)
     {
-        return keccak256(
-            abi.encode(
-                _batchHeader.batchRoot,
-                _batchHeader.batchSize,
-                _batchHeader.prevTotalElements,
-                _batchHeader.extraData
-            )
-        );
+        return
+            keccak256(
+                abi.encode(
+                    _batchHeader.batchRoot,
+                    _batchHeader.batchSize,
+                    _batchHeader.prevTotalElements,
+                    _batchHeader.extraData
+                )
+            );
     }
 }

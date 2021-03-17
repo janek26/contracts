@@ -1,9 +1,8 @@
+/* Internal Imports */
+import { fromHexString, remove0x } from '@eth-optimism/core-utils'
+import { Wallet, constants } from 'ethers'
 /* External Imports */
 import { ethers } from 'hardhat'
-import { constants, Wallet } from 'ethers'
-
-/* Internal Imports */
-import { remove0x, fromHexString } from '@eth-optimism/core-utils'
 
 export interface EIP155Transaction {
   nonce: number

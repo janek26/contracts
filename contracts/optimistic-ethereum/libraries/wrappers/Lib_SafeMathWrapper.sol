@@ -4,7 +4,9 @@
 pragma solidity >0.5.0 <0.8.0;
 
 /* Library Imports */
-import { Lib_SafeExecutionManagerWrapper } from "./Lib_SafeExecutionManagerWrapper.sol";
+import {
+    Lib_SafeExecutionManagerWrapper
+} from "./Lib_SafeExecutionManagerWrapper.sol";
 
 /**
  * @title Lib_SafeMathWrapper
@@ -37,7 +39,10 @@ library Lib_SafeMathWrapper {
      */
     function add(uint256 a, uint256 b) internal returns (uint256) {
         uint256 c = a + b;
-        Lib_SafeExecutionManagerWrapper.safeREQUIRE(c >= a, "Lib_SafeMathWrapper: addition overflow");
+        Lib_SafeExecutionManagerWrapper.safeREQUIRE(
+            c >= a,
+            "Lib_SafeMathWrapper: addition overflow"
+        );
 
         return c;
     }
@@ -66,7 +71,11 @@ library Lib_SafeMathWrapper {
      *
      * - Subtraction cannot overflow.
      */
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal returns (uint256) {
+    function sub(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal returns (uint256) {
         Lib_SafeExecutionManagerWrapper.safeREQUIRE(b <= a, errorMessage);
         uint256 c = a - b;
 
@@ -92,7 +101,10 @@ library Lib_SafeMathWrapper {
         }
 
         uint256 c = a * b;
-        Lib_SafeExecutionManagerWrapper.safeREQUIRE(c / a == b, "Lib_SafeMathWrapper: multiplication overflow");
+        Lib_SafeExecutionManagerWrapper.safeREQUIRE(
+            c / a == b,
+            "Lib_SafeMathWrapper: multiplication overflow"
+        );
 
         return c;
     }
@@ -125,7 +137,11 @@ library Lib_SafeMathWrapper {
      *
      * - The divisor cannot be zero.
      */
-    function div(uint256 a, uint256 b, string memory errorMessage) internal returns (uint256) {
+    function div(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal returns (uint256) {
         Lib_SafeExecutionManagerWrapper.safeREQUIRE(b > 0, errorMessage);
         uint256 c = a / b;
         // assert(a == b * c + a % b); // There is no case in which this doesn't hold
@@ -161,7 +177,11 @@ library Lib_SafeMathWrapper {
      *
      * - The divisor cannot be zero.
      */
-    function mod(uint256 a, uint256 b, string memory errorMessage) internal returns (uint256) {
+    function mod(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal returns (uint256) {
         Lib_SafeExecutionManagerWrapper.safeREQUIRE(b != 0, errorMessage);
         return a % b;
     }

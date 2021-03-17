@@ -20,15 +20,8 @@ contract mockOVM_GenericCrossDomainMessenger {
         address _target,
         bytes memory _message,
         uint32 _gasLimit
-    )
-        public
-    {
-        emit SentMessage(
-            msg.sender,
-            _target,
-            _message,
-            _gasLimit
-        );
+    ) public {
+        emit SentMessage(msg.sender, _target, _message, _gasLimit);
     }
 
     function relayMessage(
@@ -36,12 +29,13 @@ contract mockOVM_GenericCrossDomainMessenger {
         address _target,
         bytes memory _message,
         uint256 _gasLimit
-    )
-        public
-    {
+    ) public {
         xDomainMessageSender = _sender;
-        (bool success, ) = _target.call{gas: _gasLimit}(_message);
-        require(success, "Cross-domain message call reverted. Did you set your gas limit high enough?");
+        (bool success, ) = _target.call{ gas: _gasLimit }(_message);
+        require(
+            success,
+            "Cross-domain message call reverted. Did you set your gas limit high enough?"
+        );
         xDomainMessageSender = address(0);
     }
 }

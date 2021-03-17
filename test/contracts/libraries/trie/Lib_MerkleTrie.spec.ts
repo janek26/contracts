@@ -1,12 +1,9 @@
-import { expect } from '../../../setup'
-
-/* External Imports */
-import * as rlp from 'rlp'
-import { ethers } from 'hardhat'
-import { Contract } from 'ethers'
 import { toHexString } from '@eth-optimism/core-utils'
+import { expect } from 'chai'
+import { Contract } from 'ethers'
+import { ethers } from 'hardhat'
+import * as rlp from 'rlp'
 
-/* Internal Imports */
 import { TrieTestGenerator } from '../../../helpers'
 
 const NODE_COUNTS = [1, 2, 128]

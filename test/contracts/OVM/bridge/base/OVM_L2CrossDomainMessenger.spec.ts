@@ -1,17 +1,14 @@
-import { expect } from '../../../../setup'
-
-/* External Imports */
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory, Signer, constants } from 'ethers'
 import { ethers } from 'hardhat'
-import { Signer, ContractFactory, Contract, constants } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
 
-/* Internal Imports */
 import {
-  makeAddressManager,
-  setProxyTarget,
   NON_NULL_BYTES32,
   NON_ZERO_ADDRESS,
   getXDomainCalldata,
+  makeAddressManager,
+  setProxyTarget,
 } from '../../../../helpers'
 
 describe('OVM_L2CrossDomainMessenger', () => {

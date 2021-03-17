@@ -1,9 +1,9 @@
 /* External Imports */
 import { Contract } from 'ethers'
 
+import { getContractFactory } from '../contract-defs'
 /* Internal Imports */
 import { RollupDeployConfig, makeContractDeployConfig } from './config'
-import { getContractFactory } from '../contract-defs'
 
 export interface DeployResult {
   AddressManager: Contract

@@ -3,10 +3,14 @@ pragma solidity >0.5.0 <0.8.0;
 
 /* Library Imports */
 import { Lib_RingBuffer } from "../../libraries/utils/Lib_RingBuffer.sol";
-import { Lib_AddressResolver } from "../../libraries/resolver/Lib_AddressResolver.sol";
+import {
+    Lib_AddressResolver
+} from "../../libraries/resolver/Lib_AddressResolver.sol";
 
 /* Interface Imports */
-import { iOVM_ChainStorageContainer } from "../../iOVM/chain/iOVM_ChainStorageContainer.sol";
+import {
+    iOVM_ChainStorageContainer
+} from "../../iOVM/chain/iOVM_ChainStorageContainer.sol";
 
 /**
  * @title OVM_ChainStorageContainer
@@ -22,14 +26,15 @@ import { iOVM_ChainStorageContainer } from "../../iOVM/chain/iOVM_ChainStorageCo
  * Compiler used: solc
  * Runtime target: EVM
  */
-contract OVM_ChainStorageContainer is iOVM_ChainStorageContainer, Lib_AddressResolver {
-
+contract OVM_ChainStorageContainer is
+    iOVM_ChainStorageContainer,
+    Lib_AddressResolver
+{
     /*************
      * Libraries *
      *************/
 
     using Lib_RingBuffer for Lib_RingBuffer.RingBuffer;
-
 
     /*************
      * Variables *
@@ -37,7 +42,6 @@ contract OVM_ChainStorageContainer is iOVM_ChainStorageContainer, Lib_AddressRes
 
     string public owner;
     Lib_RingBuffer.RingBuffer internal buffer;
-
 
     /***************
      * Constructor *
@@ -47,15 +51,11 @@ contract OVM_ChainStorageContainer is iOVM_ChainStorageContainer, Lib_AddressRes
      * @param _libAddressManager Address of the Address Manager.
      * @param _owner Name of the contract that owns this container (will be resolved later).
      */
-    constructor(
-        address _libAddressManager,
-        string memory _owner
-    )
+    constructor(address _libAddressManager, string memory _owner)
         Lib_AddressResolver(_libAddressManager)
     {
         owner = _owner;
     }
-
 
     /**********************
      * Function Modifiers *
@@ -69,7 +69,6 @@ contract OVM_ChainStorageContainer is iOVM_ChainStorageContainer, Lib_AddressRes
         _;
     }
 
-
     /********************
      * Public Functions *
      ********************/
@@ -77,11 +76,9 @@ contract OVM_ChainStorageContainer is iOVM_ChainStorageContainer, Lib_AddressRes
     /**
      * @inheritdoc iOVM_ChainStorageContainer
      */
-    function setGlobalMetadata(
-        bytes27 _globalMetadata
-    )
-        override
+    function setGlobalMetadata(bytes27 _globalMetadata)
         public
+        override
         onlyOwner
     {
         return buffer.setExtraData(_globalMetadata);
@@ -90,53 +87,30 @@ contract OVM_ChainStorageContainer is iOVM_ChainStorageContainer, Lib_AddressRes
     /**
      * @inheritdoc iOVM_ChainStorageContainer
      */
-    function getGlobalMetadata()
-        override
-        public
-        view
-        returns (
-            bytes27
-        )
-    {
+    function getGlobalMetadata() public view override returns (bytes27) {
         return buffer.getExtraData();
     }
 
     /**
      * @inheritdoc iOVM_ChainStorageContainer
      */
-    function length()
-        override
-        public
-        view
-        returns (
-            uint256
-        )
-    {
+    function length() public view override returns (uint256) {
         return uint256(buffer.getLength());
     }
 
     /**
      * @inheritdoc iOVM_ChainStorageContainer
      */
-    function push(
-        bytes32 _object
-    )
-        override
-        public
-        onlyOwner
-    {
+    function push(bytes32 _object) public override onlyOwner {
         buffer.push(_object);
     }
 
     /**
      * @inheritdoc iOVM_ChainStorageContainer
      */
-    function push(
-        bytes32 _object,
-        bytes27 _globalMetadata
-    )
-        override
+    function push(bytes32 _object, bytes27 _globalMetadata)
         public
+        override
         onlyOwner
     {
         buffer.push(_object, _globalMetadata);
@@ -145,32 +119,19 @@ contract OVM_ChainStorageContainer is iOVM_ChainStorageContainer, Lib_AddressRes
     /**
      * @inheritdoc iOVM_ChainStorageContainer
      */
-    function get(
-        uint256 _index
-    )
-        override
-        public
-        view
-        returns (
-            bytes32
-        )
-    {
+    function get(uint256 _index) public view override returns (bytes32) {
         return buffer.get(uint40(_index));
     }
-    
+
     /**
      * @inheritdoc iOVM_ChainStorageContainer
      */
-    function deleteElementsAfterInclusive(
-        uint256 _index
-    )
-        override
+    function deleteElementsAfterInclusive(uint256 _index)
         public
+        override
         onlyOwner
     {
-        buffer.deleteElementsAfterInclusive(
-            uint40(_index)
-        );
+        buffer.deleteElementsAfterInclusive(uint40(_index));
     }
 
     /**
@@ -179,25 +140,16 @@ contract OVM_ChainStorageContainer is iOVM_ChainStorageContainer, Lib_AddressRes
     function deleteElementsAfterInclusive(
         uint256 _index,
         bytes27 _globalMetadata
-    )
-        override
-        public
-        onlyOwner
-    {
-        buffer.deleteElementsAfterInclusive(
-            uint40(_index),
-            _globalMetadata
-        );
+    ) public override onlyOwner {
+        buffer.deleteElementsAfterInclusive(uint40(_index), _globalMetadata);
     }
 
     /**
      * @inheritdoc iOVM_ChainStorageContainer
      */
-    function setNextOverwritableIndex(
-        uint256 _index
-    )
-        override
+    function setNextOverwritableIndex(uint256 _index)
         public
+        override
         onlyOwner
     {
         buffer.nextOverwritableIndex = _index;

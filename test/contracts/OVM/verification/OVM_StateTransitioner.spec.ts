@@ -1,28 +1,24 @@
-/* tslint:disable:no-empty */
-import { expect } from '../../../setup'
-
-/* External Imports */
+import { toHexString } from '@eth-optimism/core-utils'
+import {
+  MockContract,
+  ModifiableContract,
+  ModifiableContractFactory,
+  smockit,
+  smoddit,
+} from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { BigNumber, Contract, constants } from 'ethers'
 import { ethers } from 'hardhat'
-import { BigNumber, constants, Contract } from 'ethers'
 import * as rlp from 'rlp'
 
-/* Internal Imports */
 import {
-  makeAddressManager,
   NON_NULL_BYTES32,
   NON_ZERO_ADDRESS,
   NULL_BYTES32,
-  setProxyTarget,
   TrieTestGenerator,
+  makeAddressManager,
+  setProxyTarget,
 } from '../../../helpers'
-import {
-  MockContract,
-  smockit,
-  ModifiableContract,
-  smoddit,
-  ModifiableContractFactory,
-} from '@eth-optimism/smock'
-import { toHexString } from '@eth-optimism/core-utils'
 
 describe('OVM_StateTransitioner', () => {
   let AddressManager: Contract

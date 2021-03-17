@@ -1,18 +1,15 @@
-import { expect } from '../../../setup'
-
-/* External Imports */
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory, Signer, constants } from 'ethers'
 import { ethers } from 'hardhat'
-import { Signer, ContractFactory, Contract, constants } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
 
-/* Internal Imports */
 import {
+  NON_NULL_BYTES32,
+  NULL_BYTES32,
+  getEthTime,
+  increaseEthTime,
   makeAddressManager,
   setProxyTarget,
-  NON_NULL_BYTES32,
-  getEthTime,
-  NULL_BYTES32,
-  increaseEthTime,
 } from '../../../helpers'
 
 describe('OVM_StateCommitmentChain', () => {

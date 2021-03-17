@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package",
   "name": "@eth-optimism/contracts",
   "version": "0.1.11",
   "main": "build/src/index.js",
@@ -27,8 +28,7 @@
     "test:gas": "hardhat test \"test/contracts/OVM/execution/OVM_StateManager.gas-spec.ts\" --no-compile --show-stack-traces",
     "lint": "yarn run lint:typescript",
     "lint:typescript": "tslint --format stylish --project .",
-    "lint:fix": "yarn run lint:fix:typescript",
-    "lint:fix:typescript": "prettier --config prettier-config.json --write \"hardhat.config.ts\" \"{src,test}/**/*.ts\"",
+    "lint:fix": "prettier --config prettier-config.json --write \"./**/*.{ts,sol,json,md,yml}\"",
     "clean": "rm -rf ./artifacts ./build ./cache",
     "deploy": "./bin/deploy.js",
     "serve": "./bin/serve_dump.sh"
@@ -43,7 +43,8 @@
     "@openzeppelin/contracts": "^3.3.0",
     "@typechain/hardhat": "^1.0.1",
     "ganache-core": "^2.12.1",
-    "glob": "^7.1.6"
+    "glob": "^7.1.6",
+    "prettier": "^2.2.1"
   },
   "devDependencies": {
     "@eth-optimism/plugins": "^0.0.17",
@@ -59,11 +60,16 @@
     "ethereum-waffle": "3.0.0",
     "ethers": "^5.0.31",
     "hardhat": "^2.0.8",
+    "husky": "^5.1.3",
+    "import-sort-style-module": "^6.0.0",
+    "lint-staged": "^10.5.4",
     "lodash": "^4.17.20",
     "merkle-patricia-tree": "^4.0.0",
     "merkletreejs": "^0.2.12",
     "mkdirp": "^1.0.4",
     "mocha": "^8.3.0",
+    "prettier-plugin-import-sort": "^0.0.6",
+    "prettier-plugin-solidity": "https://github.com/prettier-solidity/prettier-plugin-solidity",
     "random-bytes-seed": "^1.0.3",
     "rlp": "^2.2.6",
     "ts-generator": "0.0.8",
@@ -71,5 +77,20 @@
   },
   "peerDependencies": {
     "ethers": "^5.0.0"
+  },
+  "importSort": {
+    ".js, .ts": {
+      "style": "module",
+      "parser": "typescript"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn test"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,sol,json,md,yml}": "prettier --write"
   }
 }

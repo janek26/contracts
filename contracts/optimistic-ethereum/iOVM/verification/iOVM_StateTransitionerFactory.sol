@@ -8,7 +8,6 @@ import { iOVM_StateTransitioner } from "./iOVM_StateTransitioner.sol";
  * @title iOVM_StateTransitionerFactory
  */
 interface iOVM_StateTransitionerFactory {
-
     /***************************************
      * Public Functions: Contract Creation *
      ***************************************/
@@ -18,9 +17,5 @@ interface iOVM_StateTransitionerFactory {
         uint256 _stateTransitionIndex,
         bytes32 _preStateRoot,
         bytes32 _transactionHash
-    )
-        external
-        returns (
-            iOVM_StateTransitioner _ovmStateTransitioner
-        );
+    ) external returns (iOVM_StateTransitioner _ovmStateTransitioner);
 }

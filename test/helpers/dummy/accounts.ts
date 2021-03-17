@@ -1,10 +1,10 @@
 /* External Imports */
 import { BigNumber, constants } from 'ethers'
 
-/* Internal Imports */
-import { DUMMY_BYTES32 } from './bytes32'
 import { NON_ZERO_ADDRESS } from '../constants'
 import { OVMAccount } from '../types/ovm-types'
+/* Internal Imports */
+import { DUMMY_BYTES32 } from './bytes32'
 
 export const DUMMY_ACCOUNTS: Array<{
   address: string

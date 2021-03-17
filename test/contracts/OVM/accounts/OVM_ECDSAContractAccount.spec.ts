@@ -1,20 +1,17 @@
-import { expect } from '../../../setup'
-
-/* External Imports */
-import { ethers, waffle } from 'hardhat'
-import { ContractFactory, Contract, Wallet } from 'ethers'
 import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory, Wallet } from 'ethers'
+import { ethers, waffle } from 'hardhat'
 
-/* Internal Imports */
-import { NON_ZERO_ADDRESS } from '../../../helpers/constants'
 import {
-  serializeNativeTransaction,
-  signNativeTransaction,
   DEFAULT_EIP155_TX,
-  serializeEthSignTransaction,
-  signEthSignMessage,
   decodeSolidityError,
+  serializeEthSignTransaction,
+  serializeNativeTransaction,
+  signEthSignMessage,
+  signNativeTransaction,
 } from '../../../helpers'
+import { NON_ZERO_ADDRESS } from '../../../helpers/constants'
 
 const callPrecompile = async (
   Helper_PrecompileCaller: Contract,

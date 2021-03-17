@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
-// @unsupported: ovm 
+// @unsupported: ovm
 pragma solidity >0.5.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 /* Interface Imports */
-import { iOVM_L1TokenGateway } from "../../../iOVM/bridge/tokens/iOVM_L1TokenGateway.sol";
+import {
+    iOVM_L1TokenGateway
+} from "../../../iOVM/bridge/tokens/iOVM_L1TokenGateway.sol";
 import { Abs_L1TokenGateway } from "./Abs_L1TokenGateway.sol";
 import { iOVM_ERC20 } from "../../../iOVM/precompiles/iOVM_ERC20.sol";
 
@@ -23,11 +25,10 @@ import { iOVM_ERC20 } from "../../../iOVM/precompiles/iOVM_ERC20.sol";
  * Runtime target: EVM
  */
 contract OVM_L1ERC20Gateway is Abs_L1TokenGateway {
-
     /********************************
      * External Contract References *
      ********************************/
-    
+
     iOVM_ERC20 public l1ERC20;
 
     /***************
@@ -41,16 +42,10 @@ contract OVM_L1ERC20Gateway is Abs_L1TokenGateway {
     constructor(
         iOVM_ERC20 _l1ERC20,
         address _l2DepositedERC20,
-        address _l1messenger 
-    )
-        Abs_L1TokenGateway(
-            _l2DepositedERC20,
-            _l1messenger
-        )
-    {
+        address _l1messenger
+    ) Abs_L1TokenGateway(_l2DepositedERC20, _l1messenger) {
         l1ERC20 = _l1ERC20;
     }
-
 
     /**************
      * Accounting *
@@ -68,16 +63,9 @@ contract OVM_L1ERC20Gateway is Abs_L1TokenGateway {
         address _from,
         address, // _to,
         uint256 _amount
-    )
-        internal
-        override
-    {
-         // Hold on to the newly deposited funds
-        l1ERC20.transferFrom(
-            _from,
-            address(this),
-            _amount
-        );
+    ) internal override {
+        // Hold on to the newly deposited funds
+        l1ERC20.transferFrom(_from, address(this), _amount);
     }
 
     /**
@@ -87,10 +75,7 @@ contract OVM_L1ERC20Gateway is Abs_L1TokenGateway {
      * @param _to L1 address that the ERC20 is being withdrawn to
      * @param _amount Amount of ERC20 to send
      */
-    function _handleFinalizeWithdrawal(
-        address _to,
-        uint _amount
-    )
+    function _handleFinalizeWithdrawal(address _to, uint256 _amount)
         internal
         override
     {

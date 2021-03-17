@@ -1,7 +1,8 @@
 import * as path from 'path'
-import * as glob from 'glob'
-import { ethers, ContractFactory, Signer } from 'ethers'
+
+import { ContractFactory, Signer, ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
+import * as glob from 'glob'
 
 export const getContractDefinition = (name: string, ovm?: boolean): any => {
   const match = glob.sync(

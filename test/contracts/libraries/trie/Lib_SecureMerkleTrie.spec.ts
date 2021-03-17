@@ -1,10 +1,7 @@
-import { expect } from '../../../setup'
-
-/* External Imports */
-import { ethers } from 'hardhat'
+import { expect } from 'chai'
 import { Contract } from 'ethers'
+import { ethers } from 'hardhat'
 
-/* Internal Imports */
 import { TrieTestGenerator } from '../../../helpers'
 
 const NODE_COUNTS = [1, 2, 128]

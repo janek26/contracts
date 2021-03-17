@@ -1,6 +1,6 @@
+import { toHexString } from '@eth-optimism/core-utils'
 /* External Imports */
 import { Signer } from 'ethers'
-import { toHexString } from '@eth-optimism/core-utils'
 
 export const deployContractCode = async (
   code: string,

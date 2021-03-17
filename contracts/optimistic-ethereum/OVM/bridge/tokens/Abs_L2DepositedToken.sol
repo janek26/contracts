@@ -3,11 +3,17 @@ pragma solidity >0.5.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 /* Interface Imports */
-import { iOVM_L2DepositedToken } from "../../../iOVM/bridge/tokens/iOVM_L2DepositedToken.sol";
-import { iOVM_L1TokenGateway } from "../../../iOVM/bridge/tokens/iOVM_L1TokenGateway.sol";
+import {
+    iOVM_L2DepositedToken
+} from "../../../iOVM/bridge/tokens/iOVM_L2DepositedToken.sol";
+import {
+    iOVM_L1TokenGateway
+} from "../../../iOVM/bridge/tokens/iOVM_L1TokenGateway.sol";
 
 /* Library Imports */
-import { OVM_CrossDomainEnabled } from "../../../libraries/bridge/OVM_CrossDomainEnabled.sol";
+import {
+    OVM_CrossDomainEnabled
+} from "../../../libraries/bridge/OVM_CrossDomainEnabled.sol";
 
 /**
  * @title Abs_L2DepositedToken
@@ -21,8 +27,10 @@ import { OVM_CrossDomainEnabled } from "../../../libraries/bridge/OVM_CrossDomai
  * Compiler used: optimistic-solc
  * Runtime target: OVM
  */
-abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomainEnabled {
-
+abstract contract Abs_L2DepositedToken is
+    iOVM_L2DepositedToken,
+    OVM_CrossDomainEnabled
+{
     /*******************
      * Contract Events *
      *******************/
@@ -42,9 +50,7 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
     /**
      * @param _l2CrossDomainMessenger L1 Messenger address being used for cross-chain communications.
      */
-    constructor(
-        address _l2CrossDomainMessenger
-    )
+    constructor(address _l2CrossDomainMessenger)
         OVM_CrossDomainEnabled(_l2CrossDomainMessenger)
     {}
 
@@ -56,15 +62,14 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
      * @param _l1TokenGateway Address of the corresponding L1 gateway deployed to the main chain
      */
 
-    function init(
-        iOVM_L1TokenGateway _l1TokenGateway
-    )
-        public
-    {
-        require(address(l1TokenGateway) == address(0), "Contract has already been initialized");
+    function init(iOVM_L1TokenGateway _l1TokenGateway) public {
+        require(
+            address(l1TokenGateway) == address(0),
+            "Contract has already been initialized"
+        );
 
         l1TokenGateway = _l1TokenGateway;
-        
+
         emit Initialized(l1TokenGateway);
     }
 
@@ -73,7 +78,10 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
      **********************/
 
     modifier onlyInitialized() {
-        require(address(l1TokenGateway) != address(0), "Contract has not yet been initialized");
+        require(
+            address(l1TokenGateway) != address(0),
+            "Contract has not yet been initialized"
+        );
         _;
     }
 
@@ -94,11 +102,8 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
 
     function _handleInitiateWithdrawal(
         address, // _to,
-        uint // _amount
-    )
-        internal
-        virtual
-    {
+        uint256 // _amount
+    ) internal virtual {
         revert("Accounting must be implemented by child contract.");
     }
 
@@ -111,11 +116,8 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
      */
     function _handleFinalizeDeposit(
         address, // _to
-        uint // _amount
-    )
-        internal
-        virtual
-    {
+        uint256 // _amount
+    ) internal virtual {
         revert("Accounting must be implemented by child contract.");
     }
 
@@ -125,17 +127,9 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
      *
      */
 
-    function getFinalizeWithdrawalL1Gas()
-        public
-        view
-        virtual
-        returns(
-            uint32
-        )
-    {
+    function getFinalizeWithdrawalL1Gas() public view virtual returns (uint32) {
         return DEFAULT_FINALIZE_WITHDRAWAL_L1_GAS;
     }
-
 
     /***************
      * Withdrawing *
@@ -145,13 +139,7 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
      * @dev initiate a withdraw of some tokens to the caller's account on L1
      * @param _amount Amount of the token to withdraw
      */
-    function withdraw(
-        uint _amount
-    )
-        external
-        override
-        onlyInitialized()
-    {
+    function withdraw(uint256 _amount) external override onlyInitialized() {
         _initiateWithdrawal(msg.sender, _amount);
     }
 
@@ -160,10 +148,7 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
      * @param _to L1 adress to credit the withdrawal to
      * @param _amount Amount of the token to withdraw
      */
-    function withdrawTo(
-        address _to,
-        uint _amount
-    )
+    function withdrawTo(address _to, uint256 _amount)
         external
         override
         onlyInitialized()
@@ -177,21 +162,17 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
      * @param _to Account to give the withdrawal to on L1
      * @param _amount Amount of the token to withdraw
      */
-    function _initiateWithdrawal(
-        address _to,
-        uint _amount
-    )
-        internal
-    {
+    function _initiateWithdrawal(address _to, uint256 _amount) internal {
         // Call our withdrawal accounting handler implemented by child contracts (usually a _burn)
         _handleInitiateWithdrawal(_to, _amount);
 
         // Construct calldata for l1TokenGateway.finalizeWithdrawal(_to, _amount)
-        bytes memory data = abi.encodeWithSelector(
-            iOVM_L1TokenGateway.finalizeWithdrawal.selector,
-            _to,
-            _amount
-        );
+        bytes memory data =
+            abi.encodeWithSelector(
+                iOVM_L1TokenGateway.finalizeWithdrawal.selector,
+                _to,
+                _amount
+            );
 
         // Send message up to L1 gateway
         sendCrossDomainMessage(
@@ -208,19 +189,16 @@ abstract contract Abs_L2DepositedToken is iOVM_L2DepositedToken, OVM_CrossDomain
      ************************************/
 
     /**
-     * @dev Complete a deposit from L1 to L2, and credits funds to the recipient's balance of this 
-     * L2 token. 
-     * This call will fail if it did not originate from a corresponding deposit in OVM_l1TokenGateway. 
+     * @dev Complete a deposit from L1 to L2, and credits funds to the recipient's balance of this
+     * L2 token.
+     * This call will fail if it did not originate from a corresponding deposit in OVM_l1TokenGateway.
      *
      * @param _to Address to receive the withdrawal at
      * @param _amount Amount of the token to withdraw
      */
-    function finalizeDeposit(
-        address _to,
-        uint _amount
-    )
+    function finalizeDeposit(address _to, uint256 _amount)
         external
-        override 
+        override
         onlyInitialized()
         onlyFromCrossDomainAccount(address(l1TokenGateway))
     {

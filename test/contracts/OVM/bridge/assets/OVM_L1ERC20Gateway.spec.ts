@@ -1,11 +1,8 @@
-import { expect } from '../../../../setup'
-
-/* External Imports */
+import { MockContract, smockit, smoddit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory, Signer, constants } from 'ethers'
 import { ethers } from 'hardhat'
-import { Signer, ContractFactory, Contract, constants } from 'ethers'
-import { smockit, MockContract, smoddit } from '@eth-optimism/smock'
 
-/* Internal Imports */
 import { NON_ZERO_ADDRESS } from '../../../../helpers'
 
 const INITIAL_TOTAL_L1_SUPPLY = 3000

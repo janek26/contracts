@@ -1,8 +1,7 @@
-import { expect } from '../../../setup'
-
+import { expect } from 'chai'
+import { Contract } from 'ethers'
 /* External Imports */
 import { ethers } from 'hardhat'
-import { Contract } from 'ethers'
 
 /* Internal Imports */
 import { SAFETY_CHECKER_TEST_JSON } from '../../../data'

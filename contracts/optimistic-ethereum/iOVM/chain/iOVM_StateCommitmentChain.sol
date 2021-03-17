@@ -9,7 +9,6 @@ import { Lib_OVMCodec } from "../../libraries/codec/Lib_OVMCodec.sol";
  * @title iOVM_StateCommitmentChain
  */
 interface iOVM_StateCommitmentChain {
-
     /**********
      * Events *
      **********/
@@ -22,11 +21,7 @@ interface iOVM_StateCommitmentChain {
         bytes _extraData
     );
 
-    event StateBatchDeleted(
-        uint256 indexed _batchIndex,
-        bytes32 _batchRoot
-    );
-
+    event StateBatchDeleted(uint256 indexed _batchIndex, bytes32 _batchRoot);
 
     /********************
      * Public Functions *
@@ -36,23 +31,13 @@ interface iOVM_StateCommitmentChain {
      * Retrieves the total number of elements submitted.
      * @return _totalElements Total submitted elements.
      */
-    function getTotalElements()
-        external
-        view
-        returns (
-            uint256 _totalElements
-        );
+    function getTotalElements() external view returns (uint256 _totalElements);
 
     /**
      * Retrieves the total number of batches submitted.
      * @return _totalBatches Total submitted batches.
      */
-    function getTotalBatches()
-        external
-        view
-        returns (
-            uint256 _totalBatches
-        );
+    function getTotalBatches() external view returns (uint256 _totalBatches);
 
     /**
      * Retrieves the timestamp of the last batch submitted by the sequencer.
@@ -61,9 +46,7 @@ interface iOVM_StateCommitmentChain {
     function getLastSequencerTimestamp()
         external
         view
-        returns (
-            uint256 _lastSequencerTimestamp
-        );
+        returns (uint256 _lastSequencerTimestamp);
 
     /**
      * Appends a batch of state roots to the chain.
@@ -73,16 +56,13 @@ interface iOVM_StateCommitmentChain {
     function appendStateBatch(
         bytes32[] calldata _batch,
         uint256 _shouldStartAtElement
-    )
-        external;
+    ) external;
 
     /**
      * Deletes all state roots after (and including) a given batch.
      * @param _batchHeader Header of the batch to start deleting from.
      */
-    function deleteStateBatch(
-        Lib_OVMCodec.ChainBatchHeader memory _batchHeader
-    )
+    function deleteStateBatch(Lib_OVMCodec.ChainBatchHeader memory _batchHeader)
         external;
 
     /**
@@ -95,12 +75,7 @@ interface iOVM_StateCommitmentChain {
         bytes32 _element,
         Lib_OVMCodec.ChainBatchHeader memory _batchHeader,
         Lib_OVMCodec.ChainInclusionProof memory _proof
-    )
-        external
-        view
-        returns (
-            bool _verified
-        );
+    ) external view returns (bool _verified);
 
     /**
      * Checks whether a given batch is still inside its fraud proof window.
@@ -109,10 +84,5 @@ interface iOVM_StateCommitmentChain {
      */
     function insideFraudProofWindow(
         Lib_OVMCodec.ChainBatchHeader memory _batchHeader
-    )
-        external
-        view
-        returns (
-            bool _inside
-        );
+    ) external view returns (bool _inside);
 }

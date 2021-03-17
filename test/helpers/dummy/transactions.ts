@@ -1,5 +1,6 @@
-import { NULL_BYTES32 } from '../constants'
 import { constants, ethers } from 'ethers'
+
+import { NULL_BYTES32 } from '../constants'
 
 export interface Transaction {
   timestamp: number

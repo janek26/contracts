@@ -1,15 +1,15 @@
 /* External Imports */
 import { fromHexString } from '@eth-optimism/core-utils'
 
+import { getContractDefinition } from '../../../../../src'
 /* Internal Imports */
 import {
   ExecutionManagerTestRunner,
-  TestDefinition,
-  OVM_TX_GAS_LIMIT,
   NON_NULL_BYTES32,
+  OVM_TX_GAS_LIMIT,
+  TestDefinition,
   VERIFIED_EMPTY_CONTRACT_HASH,
 } from '../../../../helpers'
-import { getContractDefinition } from '../../../../../src'
 
 const test_ovmCREATEEOA: TestDefinition = {
   name: 'Basic tests for CREATEEOA',

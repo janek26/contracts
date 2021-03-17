@@ -3,13 +3,14 @@ pragma solidity >0.5.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 /* Contract Imports */
-import { iAbs_BaseCrossDomainMessenger } from "../../iOVM/bridge/messaging/iAbs_BaseCrossDomainMessenger.sol";
+import {
+    iAbs_BaseCrossDomainMessenger
+} from "../../iOVM/bridge/messaging/iAbs_BaseCrossDomainMessenger.sol";
 
 /**
  * @title mockOVM_CrossDomainMessenger
  */
 contract mockOVM_CrossDomainMessenger is iAbs_BaseCrossDomainMessenger {
-
     /***********
      * Structs *
      ***********/
@@ -23,7 +24,6 @@ contract mockOVM_CrossDomainMessenger is iAbs_BaseCrossDomainMessenger {
         uint32 gasLimit;
     }
 
-
     /**********************
      * Contract Variables *
      **********************/
@@ -33,8 +33,7 @@ contract mockOVM_CrossDomainMessenger is iAbs_BaseCrossDomainMessenger {
     uint256 internal lastRelayedMessage;
     uint256 internal delay;
     uint256 public messageNonce;
-    address override public xDomainMessageSender;
-
+    address public override xDomainMessageSender;
 
     /***************
      * Constructor *
@@ -43,13 +42,9 @@ contract mockOVM_CrossDomainMessenger is iAbs_BaseCrossDomainMessenger {
     /**
      * @param _delay Time in seconds before a message can be relayed.
      */
-    constructor(
-        uint256 _delay
-    )
-    {
+    constructor(uint256 _delay) {
         delay = _delay;
     }
-
 
     /********************
      * Public Functions *
@@ -62,11 +57,7 @@ contract mockOVM_CrossDomainMessenger is iAbs_BaseCrossDomainMessenger {
      *      but we still need to determine an adequate mechanism for updating this address.
      * @param _targetMessengerAddress New messenger address.
      */
-    function setTargetMessengerAddress(
-        address _targetMessengerAddress
-    )
-        public
-    {
+    function setTargetMessengerAddress(address _targetMessengerAddress) public {
         targetMessengerAddress = _targetMessengerAddress;
     }
 
@@ -80,23 +71,21 @@ contract mockOVM_CrossDomainMessenger is iAbs_BaseCrossDomainMessenger {
         address _target,
         bytes memory _message,
         uint32 _gasLimit
-    )
-        override
-        public
-    {
-        mockOVM_CrossDomainMessenger targetMessenger = mockOVM_CrossDomainMessenger(
-            targetMessengerAddress
-        );
+    ) public override {
+        mockOVM_CrossDomainMessenger targetMessenger =
+            mockOVM_CrossDomainMessenger(targetMessengerAddress);
 
         // Just send it over!
-        targetMessenger.receiveMessage(ReceivedMessage({
-            timestamp: block.timestamp,
-            target: _target,
-            sender: msg.sender,
-            message: _message,
-            messageNonce: messageNonce,
-            gasLimit: _gasLimit
-        }));
+        targetMessenger.receiveMessage(
+            ReceivedMessage({
+                timestamp: block.timestamp,
+                target: _target,
+                sender: msg.sender,
+                message: _message,
+                messageNonce: messageNonce,
+                gasLimit: _gasLimit
+            })
+        );
 
         messageNonce += 1;
     }
@@ -105,11 +94,7 @@ contract mockOVM_CrossDomainMessenger is iAbs_BaseCrossDomainMessenger {
      * Receives a message to be sent later.
      * @param _message Message to send later.
      */
-    function receiveMessage(
-        ReceivedMessage memory _message
-    )
-        public
-    {
+    function receiveMessage(ReceivedMessage memory _message) public {
         fullReceivedMessages.push(_message);
     }
 
@@ -117,29 +102,31 @@ contract mockOVM_CrossDomainMessenger is iAbs_BaseCrossDomainMessenger {
      * Checks whether we have messages to relay.
      * @param _exists Whether or not we have more messages to relay.
      */
-    function hasNextMessage()
-        public
-        view
-        returns (
-            bool _exists
-        )
-    {
+    function hasNextMessage() public view returns (bool _exists) {
         return fullReceivedMessages.length > lastRelayedMessage;
     }
 
     /**
      * Relays the last received message not yet relayed.
      */
-    function relayNextMessage()
-        public
-    {
+    function relayNextMessage() public {
         require(hasNextMessage(), "No pending messages to relay");
-        ReceivedMessage memory nextMessage = fullReceivedMessages[lastRelayedMessage];
-        require(nextMessage.timestamp + delay < block.timestamp, "Message is not ready to be relayed. The delay period is not up yet!");
+        ReceivedMessage memory nextMessage =
+            fullReceivedMessages[lastRelayedMessage];
+        require(
+            nextMessage.timestamp + delay < block.timestamp,
+            "Message is not ready to be relayed. The delay period is not up yet!"
+        );
 
         xDomainMessageSender = nextMessage.sender;
-        (bool success,) = nextMessage.target.call{gas: nextMessage.gasLimit}(nextMessage.message);
-        require(success, "Cross-domain message call reverted. Did you set your gas limit high enough?");
+        (bool success, ) =
+            nextMessage.target.call{ gas: nextMessage.gasLimit }(
+                nextMessage.message
+            );
+        require(
+            success,
+            "Cross-domain message call reverted. Did you set your gas limit high enough?"
+        );
         lastRelayedMessage += 1;
     }
 }

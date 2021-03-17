@@ -1,10 +1,10 @@
 /* Internal Imports */
 import {
   ExecutionManagerTestRunner,
-  TestDefinition,
-  OVM_TX_GAS_LIMIT,
-  NULL_BYTES32,
   NON_NULL_BYTES32,
+  NULL_BYTES32,
+  OVM_TX_GAS_LIMIT,
+  TestDefinition,
   getStorageXOR,
 } from '../../../../helpers'
 

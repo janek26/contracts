@@ -1,13 +1,14 @@
 /* Internal Imports */
 import { constants } from 'ethers'
+
 import {
   ExecutionManagerTestRunner,
-  TestDefinition,
-  OVM_TX_GAS_LIMIT,
-  NON_NULL_BYTES32,
-  VERIFIED_EMPTY_CONTRACT_HASH,
-  NUISANCE_GAS_COSTS,
   Helper_TestRunner_BYTELEN,
+  NON_NULL_BYTES32,
+  NUISANCE_GAS_COSTS,
+  OVM_TX_GAS_LIMIT,
+  TestDefinition,
+  VERIFIED_EMPTY_CONTRACT_HASH,
 } from '../../../../helpers'
 
 const CREATED_CONTRACT_1 = '0x2bda4a99d5be88609d23b1e4ab5d1d34fb1c2feb'

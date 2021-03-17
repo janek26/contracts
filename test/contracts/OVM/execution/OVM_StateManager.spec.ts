@@ -1,8 +1,7 @@
-import { expect } from '../../../setup'
-
+import { expect } from 'chai'
+import { BigNumber, Contract, ContractFactory, Signer, constants } from 'ethers'
 /* External Imports */
 import { ethers } from 'hardhat'
-import { Contract, ContractFactory, Signer, BigNumber, constants } from 'ethers'
 import _ from 'lodash'
 
 /* Internal Imports */

@@ -3,21 +3,28 @@ pragma solidity >0.5.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 /* Interface Imports */
-import { iAbs_BaseCrossDomainMessenger } from "../../../iOVM/bridge/messaging/iAbs_BaseCrossDomainMessenger.sol";
+import {
+    iAbs_BaseCrossDomainMessenger
+} from "../../../iOVM/bridge/messaging/iAbs_BaseCrossDomainMessenger.sol";
 
 /* Library Imports */
-import { Lib_ReentrancyGuard } from "../../../libraries/utils/Lib_ReentrancyGuard.sol";
+import {
+    Lib_ReentrancyGuard
+} from "../../../libraries/utils/Lib_ReentrancyGuard.sol";
 
 /**
  * @title Abs_BaseCrossDomainMessenger
  * @dev The Base Cross Domain Messenger is an abstract contract providing the interface and common functionality used in the
- * L1 and L2 Cross Domain Messengers. It can also serve as a template for developers wishing to implement a custom bridge 
+ * L1 and L2 Cross Domain Messengers. It can also serve as a template for developers wishing to implement a custom bridge
  * contract to suit their needs.
  *
  * Compiler used: defined by child contract
  * Runtime target: defined by child contract
  */
-abstract contract Abs_BaseCrossDomainMessenger is iAbs_BaseCrossDomainMessenger, Lib_ReentrancyGuard {
+abstract contract Abs_BaseCrossDomainMessenger is
+    iAbs_BaseCrossDomainMessenger,
+    Lib_ReentrancyGuard
+{
     /**************
      *  Constants *
      **************/
@@ -25,15 +32,16 @@ abstract contract Abs_BaseCrossDomainMessenger is iAbs_BaseCrossDomainMessenger,
     // The default x-domain message sender being set to a non-zero value makes
     // deployment a bit more expensive, but in exchange the refund on every call to
     // `relayMessage` by the L1 and L2 messengers will be higher.
-    address internal constant DEFAULT_XDOMAIN_SENDER = 0x000000000000000000000000000000000000dEaD;
+    address internal constant DEFAULT_XDOMAIN_SENDER =
+        0x000000000000000000000000000000000000dEaD;
 
     /**********************
      * Contract Variables *
      **********************/
 
-    mapping (bytes32 => bool) public relayedMessages;
-    mapping (bytes32 => bool) public successfulMessages;
-    mapping (bytes32 => bool) public sentMessages;
+    mapping(bytes32 => bool) public relayedMessages;
+    mapping(bytes32 => bool) public successfulMessages;
+    mapping(bytes32 => bool) public sentMessages;
     uint256 public messageNonce;
     address internal xDomainMsgSender = DEFAULT_XDOMAIN_SENDER;
 
@@ -43,8 +51,11 @@ abstract contract Abs_BaseCrossDomainMessenger is iAbs_BaseCrossDomainMessenger,
 
     constructor() Lib_ReentrancyGuard() {}
 
-    function xDomainMessageSender() public override view returns (address) {
-        require(xDomainMsgSender != DEFAULT_XDOMAIN_SENDER, "xDomainMessageSender is not set");
+    function xDomainMessageSender() public view override returns (address) {
+        require(
+            xDomainMsgSender != DEFAULT_XDOMAIN_SENDER,
+            "xDomainMessageSender is not set"
+        );
         return xDomainMsgSender;
     }
 
@@ -58,16 +69,9 @@ abstract contract Abs_BaseCrossDomainMessenger is iAbs_BaseCrossDomainMessenger,
         address _target,
         bytes memory _message,
         uint32 _gasLimit
-    )
-        override
-        public
-    {
-        bytes memory xDomainCalldata = _getXDomainCalldata(
-            _target,
-            msg.sender,
-            _message,
-            messageNonce
-        );
+    ) public override {
+        bytes memory xDomainCalldata =
+            _getXDomainCalldata(_target, msg.sender, _message, messageNonce);
 
         messageNonce += 1;
         sentMessages[keccak256(xDomainCalldata)] = true;
@@ -93,20 +97,15 @@ abstract contract Abs_BaseCrossDomainMessenger is iAbs_BaseCrossDomainMessenger,
         address _sender,
         bytes memory _message,
         uint256 _messageNonce
-    )
-        internal
-        pure
-        returns (
-            bytes memory
-        )
-    {
-        return abi.encodeWithSignature(
-            "relayMessage(address,address,bytes,uint256)",
-            _target,
-            _sender,
-            _message,
-            _messageNonce
-        );
+    ) internal pure returns (bytes memory) {
+        return
+            abi.encodeWithSignature(
+                "relayMessage(address,address,bytes,uint256)",
+                _target,
+                _sender,
+                _message,
+                _messageNonce
+            );
     }
 
     /**
@@ -117,10 +116,7 @@ abstract contract Abs_BaseCrossDomainMessenger is iAbs_BaseCrossDomainMessenger,
     function _sendXDomainMessage(
         bytes memory, // _message,
         uint256 // _gasLimit
-    )
-        virtual
-        internal
-    {
+    ) internal virtual {
         revert("Implement me in child contracts!");
     }
 }

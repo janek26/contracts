@@ -1,7 +1,3 @@
-/* tslint:disable:no-empty */
-import '../../../setup'
-
-/* Internal Imports */
 import { Lib_OVMCodec_TEST_JSON } from '../../../data'
 import { runJsonTest } from '../../../helpers'
 

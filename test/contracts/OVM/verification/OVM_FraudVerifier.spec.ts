@@ -1,20 +1,17 @@
-import { expect } from '../../../setup'
-
-/* External Imports */
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { BigNumber, Contract, ContractFactory } from 'ethers'
 import { ethers } from 'hardhat'
-import { ContractFactory, Contract, BigNumber } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
 
-/* Internal Imports */
 import {
-  makeAddressManager,
-  setProxyTarget,
   DUMMY_BATCH_HEADERS,
   DUMMY_BATCH_PROOFS,
   DUMMY_OVM_TRANSACTIONS,
   NON_NULL_BYTES32,
   NULL_BYTES32,
   hashTransaction,
+  makeAddressManager,
+  setProxyTarget,
 } from '../../../helpers'
 
 const DUMMY_TX_CHAIN_ELEMENTS = [...Array(10).keys()].map((i) => {

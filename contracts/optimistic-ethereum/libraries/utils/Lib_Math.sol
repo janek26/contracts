@@ -5,7 +5,6 @@ pragma solidity >0.5.0 <0.8.0;
  * @title Lib_Math
  */
 library Lib_Math {
-
     /**********************
      * Internal Functions *
      **********************/
@@ -16,16 +15,7 @@ library Lib_Math {
      * @param _y Second number to compare.
      * @return Lesser of the two numbers.
      */
-    function min(
-        uint256 _x,
-        uint256 _y
-    )
-        internal
-        pure
-        returns (
-            uint256
-        )
-    {
+    function min(uint256 _x, uint256 _y) internal pure returns (uint256) {
         if (_x < _y) {
             return _x;
         }

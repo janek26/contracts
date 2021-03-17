@@ -1,5 +1,6 @@
-import { NULL_BYTES32, NON_ZERO_ADDRESS } from '../constants'
 import { ethers } from 'hardhat'
+
+import { NON_ZERO_ADDRESS, NULL_BYTES32 } from '../constants'
 
 export const DUMMY_BATCH_HEADERS = [
   {

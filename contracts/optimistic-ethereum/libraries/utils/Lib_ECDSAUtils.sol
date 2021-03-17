@@ -5,7 +5,6 @@ pragma solidity >0.5.0 <0.8.0;
  * @title Lib_ECDSAUtils
  */
 library Lib_ECDSAUtils {
-
     /**************************************
      * Internal Functions: ECDSA Recovery *
      **************************************/
@@ -25,36 +24,22 @@ library Lib_ECDSAUtils {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    )
-        internal
-        pure
-        returns (
-            address _sender
-        )
-    {
+    ) internal pure returns (address _sender) {
         bytes32 messageHash = getMessageHash(_message, _isEthSignedMessage);
 
-        return ecrecover(
-            messageHash,
-            _v + 27,
-            _r,
-            _s
-        );
+        return ecrecover(messageHash, _v + 27, _r, _s);
     }
 
-    function getMessageHash(
-        bytes memory _message,
-        bool _isEthSignedMessage
-    )
+    function getMessageHash(bytes memory _message, bool _isEthSignedMessage)
         internal
         pure
-        returns (bytes32) {
+        returns (bytes32)
+    {
         if (_isEthSignedMessage) {
             return getEthSignedMessageHash(_message);
         }
         return getNativeMessageHash(_message);
     }
-
 
     /*************************************
      * Private Functions: ECDSA Recovery *
@@ -65,14 +50,10 @@ library Lib_ECDSAUtils {
      * @param _message Message to hash.
      * @return _messageHash Native message hash.
      */
-    function getNativeMessageHash(
-        bytes memory _message
-    )
+    function getNativeMessageHash(bytes memory _message)
         private
         pure
-        returns (
-            bytes32 _messageHash
-        )
+        returns (bytes32 _messageHash)
     {
         return keccak256(_message);
     }
@@ -82,14 +63,10 @@ library Lib_ECDSAUtils {
      * @param _message Message to hash.
      * @return _messageHash Prefixed message hash.
      */
-    function getEthSignedMessageHash(
-        bytes memory _message
-    )
+    function getEthSignedMessageHash(bytes memory _message)
         private
         pure
-        returns (
-            bytes32 _messageHash
-        )
+        returns (bytes32 _messageHash)
     {
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         bytes32 messageHash = keccak256(_message);

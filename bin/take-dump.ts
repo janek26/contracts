@@ -1,14 +1,15 @@
 /* External Imports */
 import * as fs from 'fs'
 import * as path from 'path'
+
 import * as mkdirp from 'mkdirp'
 
-const env = process.env
-const CHAIN_ID = env.CHAIN_ID || '420'
-
+import { RollupDeployConfig } from '../src/contract-deployment'
 /* Internal Imports */
 import { makeStateDump } from '../src/contract-dumps'
-import { RollupDeployConfig } from '../src/contract-deployment'
+
+const { CHAIN_ID = '420' } = process.env || {}
+
 ;(async () => {
   const outdir = path.resolve(__dirname, '../build/dumps')
   const outfile = path.join(outdir, 'state-dump.latest.json')

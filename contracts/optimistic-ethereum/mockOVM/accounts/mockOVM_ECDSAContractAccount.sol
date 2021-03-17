@@ -3,18 +3,21 @@ pragma solidity >0.5.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 /* Interface Imports */
-import { iOVM_ECDSAContractAccount } from "../../iOVM/accounts/iOVM_ECDSAContractAccount.sol";
+import {
+    iOVM_ECDSAContractAccount
+} from "../../iOVM/accounts/iOVM_ECDSAContractAccount.sol";
 
 /* Library Imports */
 import { Lib_OVMCodec } from "../../libraries/codec/Lib_OVMCodec.sol";
 import { Lib_ECDSAUtils } from "../../libraries/utils/Lib_ECDSAUtils.sol";
-import { Lib_SafeExecutionManagerWrapper } from "../../libraries/wrappers/Lib_SafeExecutionManagerWrapper.sol";
+import {
+    Lib_SafeExecutionManagerWrapper
+} from "../../libraries/wrappers/Lib_SafeExecutionManagerWrapper.sol";
 
 /**
  * @title mockOVM_ECDSAContractAccount
  */
 contract mockOVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
-
     /********************
      * Public Functions *
      ********************/
@@ -35,16 +38,11 @@ contract mockOVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
         uint8, // _v,
         bytes32, // _r,
         bytes32 // _s
-    )
-        override
-        public
-        returns (
-            bool _success,
-            bytes memory _returndata
-        )
-    {
-        bool isEthSign = _signatureType == Lib_OVMCodec.EOASignatureType.ETH_SIGNED_MESSAGE;
-        Lib_OVMCodec.EIP155Transaction memory decodedTx = Lib_OVMCodec.decodeEIP155Transaction(_transaction, isEthSign);
+    ) public override returns (bool _success, bytes memory _returndata) {
+        bool isEthSign =
+            _signatureType == Lib_OVMCodec.EOASignatureType.ETH_SIGNED_MESSAGE;
+        Lib_OVMCodec.EIP155Transaction memory decodedTx =
+            Lib_OVMCodec.decodeEIP155Transaction(_transaction, isEthSign);
 
         // Need to make sure that the transaction nonce is right.
         Lib_SafeExecutionManagerWrapper.safeREQUIRE(
@@ -54,10 +52,11 @@ contract mockOVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
 
         // Contract creations are signalled by sending a transaction to the zero address.
         if (decodedTx.to == address(0)) {
-            (address created, ) = Lib_SafeExecutionManagerWrapper.safeCREATE(
-                decodedTx.gasLimit,
-                decodedTx.data
-            );
+            (address created, ) =
+                Lib_SafeExecutionManagerWrapper.safeCREATE(
+                    decodedTx.gasLimit,
+                    decodedTx.data
+                );
 
             // If the created address is the ZERO_ADDRESS then we know the deployment failed, though not why
             return (created != address(0), abi.encode(created));
@@ -67,11 +66,12 @@ contract mockOVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
             // cases, but since this is a contract we'd end up bumping the nonce twice.
             Lib_SafeExecutionManagerWrapper.safeSETNONCE(decodedTx.nonce + 1);
 
-            return Lib_SafeExecutionManagerWrapper.safeCALL(
-                decodedTx.gasLimit,
-                decodedTx.to,
-                decodedTx.data
-            );
+            return
+                Lib_SafeExecutionManagerWrapper.safeCALL(
+                    decodedTx.gasLimit,
+                    decodedTx.to,
+                    decodedTx.data
+                );
         }
     }
 
@@ -79,17 +79,7 @@ contract mockOVM_ECDSAContractAccount is iOVM_ECDSAContractAccount {
         uint256 _gasLimit,
         address _to,
         bytes memory _data
-    )
-        public
-        returns (
-            bool _success,
-            bytes memory _returndata
-        )
-    {
-        return Lib_SafeExecutionManagerWrapper.safeCALL(
-            _gasLimit,
-            _to,
-            _data
-        );
+    ) public returns (bool _success, bytes memory _returndata) {
+        return Lib_SafeExecutionManagerWrapper.safeCALL(_gasLimit, _to, _data);
     }
 }

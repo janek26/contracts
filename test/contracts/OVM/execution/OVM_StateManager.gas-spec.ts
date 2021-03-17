@@ -1,8 +1,6 @@
-import '../../../setup'
-
+import { Contract, ContractFactory, Signer, constants } from 'ethers'
 /* External Imports */
 import { ethers } from 'hardhat'
-import { constants, Contract, ContractFactory, Signer } from 'ethers'
 import _ from 'lodash'
 
 /* Internal Imports */
@@ -10,10 +8,10 @@ import {
   DUMMY_ACCOUNTS,
   DUMMY_BYTES32,
   EMPTY_ACCOUNT_CODE_HASH,
-  NON_ZERO_ADDRESS,
-  NON_NULL_BYTES32,
-  STORAGE_XOR_VALUE,
   GasMeasurement,
+  NON_NULL_BYTES32,
+  NON_ZERO_ADDRESS,
+  STORAGE_XOR_VALUE,
 } from '../../../helpers'
 
 const DUMMY_ACCOUNT = DUMMY_ACCOUNTS[0]

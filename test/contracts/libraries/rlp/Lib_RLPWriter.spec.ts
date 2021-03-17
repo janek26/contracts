@@ -1,11 +1,7 @@
-/* tslint:disable:no-empty */
-import { expect } from '../../../setup'
-
-/* External Imports */
-import { ethers } from 'hardhat'
+import { expect } from 'chai'
 import { Contract } from 'ethers'
+import { ethers } from 'hardhat'
 
-/* Internal Imports */
 import { Lib_RLPWriter_TEST_JSON } from '../../../data'
 
 const encode = async (Lib_RLPWriter: Contract, input: any): Promise<void> => {

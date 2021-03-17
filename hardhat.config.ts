@@ -1,16 +1,16 @@
-import { HardhatUserConfig } from 'hardhat/types'
-
-import {
-  DEFAULT_ACCOUNTS_HARDHAT,
-  RUN_OVM_TEST_GAS,
-} from './test/helpers/constants'
-
 // Hardhat plugins
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
 import '@typechain/hardhat'
 import '@eth-optimism/plugins/hardhat/compiler'
 import '@eth-optimism/smock/build/src/plugins/hardhat-storagelayout'
+
+import { HardhatUserConfig } from 'hardhat/types'
+
+import {
+  DEFAULT_ACCOUNTS_HARDHAT,
+  RUN_OVM_TEST_GAS,
+} from './test/helpers/constants'
 
 const config: HardhatUserConfig = {
   networks: {

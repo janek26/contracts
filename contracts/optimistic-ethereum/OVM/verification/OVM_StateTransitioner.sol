@@ -5,20 +5,30 @@ pragma experimental ABIEncoderV2;
 
 /* Library Imports */
 import { Lib_OVMCodec } from "../../libraries/codec/Lib_OVMCodec.sol";
-import { Lib_AddressResolver } from "../../libraries/resolver/Lib_AddressResolver.sol";
+import {
+    Lib_AddressResolver
+} from "../../libraries/resolver/Lib_AddressResolver.sol";
 import { Lib_EthUtils } from "../../libraries/utils/Lib_EthUtils.sol";
 import { Lib_Bytes32Utils } from "../../libraries/utils/Lib_Bytes32Utils.sol";
 import { Lib_BytesUtils } from "../../libraries/utils/Lib_BytesUtils.sol";
-import { Lib_SecureMerkleTrie } from "../../libraries/trie/Lib_SecureMerkleTrie.sol";
+import {
+    Lib_SecureMerkleTrie
+} from "../../libraries/trie/Lib_SecureMerkleTrie.sol";
 import { Lib_RLPWriter } from "../../libraries/rlp/Lib_RLPWriter.sol";
 import { Lib_RLPReader } from "../../libraries/rlp/Lib_RLPReader.sol";
 
 /* Interface Imports */
-import { iOVM_StateTransitioner } from "../../iOVM/verification/iOVM_StateTransitioner.sol";
+import {
+    iOVM_StateTransitioner
+} from "../../iOVM/verification/iOVM_StateTransitioner.sol";
 import { iOVM_BondManager } from "../../iOVM/verification/iOVM_BondManager.sol";
-import { iOVM_ExecutionManager } from "../../iOVM/execution/iOVM_ExecutionManager.sol";
+import {
+    iOVM_ExecutionManager
+} from "../../iOVM/execution/iOVM_ExecutionManager.sol";
 import { iOVM_StateManager } from "../../iOVM/execution/iOVM_StateManager.sol";
-import { iOVM_StateManagerFactory } from "../../iOVM/execution/iOVM_StateManagerFactory.sol";
+import {
+    iOVM_StateManagerFactory
+} from "../../iOVM/execution/iOVM_StateManagerFactory.sol";
 
 /* Contract Imports */
 import { Abs_FraudContributor } from "./Abs_FraudContributor.sol";
@@ -33,29 +43,26 @@ import { Abs_FraudContributor } from "./Abs_FraudContributor.sol";
  * This contract controls the State Manager and Execution Manager, and uses them to calculate the
  * post-state root by applying the transaction. The Fraud Verifier can then check for fraud by comparing
  * the calculated post-state root with the proposed post-state root.
- * 
+ *
  * Compiler used: solc
  * Runtime target: EVM
  */
-contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOVM_StateTransitioner {
-
+contract OVM_StateTransitioner is
+    Lib_AddressResolver,
+    Abs_FraudContributor,
+    iOVM_StateTransitioner
+{
     /*******************
      * Data Structures *
      *******************/
 
-    enum TransitionPhase {
-        PRE_EXECUTION,
-        POST_EXECUTION,
-        COMPLETE
-    }
-
+    enum TransitionPhase { PRE_EXECUTION, POST_EXECUTION, COMPLETE }
 
     /*******************************************
      * Contract Variables: Contract References *
      *******************************************/
 
     iOVM_StateManager public ovmStateManager;
-
 
     /*******************************************
      * Contract Variables: Internal Accounting *
@@ -67,14 +74,14 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
     uint256 internal stateTransitionIndex;
     bytes32 internal transactionHash;
 
-
     /*************
      * Constants *
      *************/
 
-    bytes32 internal constant EMPTY_ACCOUNT_CODE_HASH = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
-    bytes32 internal constant EMPTY_ACCOUNT_STORAGE_ROOT = 0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421;
-
+    bytes32 internal constant EMPTY_ACCOUNT_CODE_HASH =
+        0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+    bytes32 internal constant EMPTY_ACCOUNT_STORAGE_ROOT =
+        0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421;
 
     /***************
      * Constructor *
@@ -91,17 +98,17 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
         uint256 _stateTransitionIndex,
         bytes32 _preStateRoot,
         bytes32 _transactionHash
-    )
-        Lib_AddressResolver(_libAddressManager)
-    {
+    ) Lib_AddressResolver(_libAddressManager) {
         stateTransitionIndex = _stateTransitionIndex;
         preStateRoot = _preStateRoot;
         postStateRoot = _preStateRoot;
         transactionHash = _transactionHash;
 
-        ovmStateManager = iOVM_StateManagerFactory(resolve("OVM_StateManagerFactory")).create(address(this));
+        ovmStateManager = iOVM_StateManagerFactory(
+            resolve("OVM_StateManagerFactory")
+        )
+            .create(address(this));
     }
-
 
     /**********************
      * Function Modifiers *
@@ -111,16 +118,13 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
      * Checks that a function is only run during a specific phase.
      * @param _phase Phase the function must run within.
      */
-    modifier onlyDuringPhase(
-        TransitionPhase _phase
-    ) {
+    modifier onlyDuringPhase(TransitionPhase _phase) {
         require(
             phase == _phase,
             "Function must be called during the correct phase."
         );
         _;
     }
-
 
     /**********************************
      * Public Functions: State Access *
@@ -131,12 +135,10 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
      * @return _preStateRoot State root before execution.
      */
     function getPreStateRoot()
-        override
         public
         view
-        returns (
-            bytes32 _preStateRoot
-        )
+        override
+        returns (bytes32 _preStateRoot)
     {
         return preStateRoot;
     }
@@ -146,12 +148,10 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
      * @return _postStateRoot State root after execution.
      */
     function getPostStateRoot()
-        override
         public
         view
-        returns (
-            bytes32 _postStateRoot
-        )
+        override
+        returns (bytes32 _postStateRoot)
     {
         return postStateRoot;
     }
@@ -160,17 +160,9 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
      * Checks whether the transitioner is complete.
      * @return _complete Whether or not the transition process is finished.
      */
-    function isComplete()
-        override
-        public
-        view
-        returns (
-            bool _complete
-        )
-    {
+    function isComplete() public view override returns (bool _complete) {
         return phase == TransitionPhase.COMPLETE;
     }
-    
 
     /***********************************
      * Public Functions: Pre-Execution *
@@ -187,35 +179,30 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
         address _ethContractAddress,
         bytes memory _stateTrieWitness
     )
-        override
         public
+        override
         onlyDuringPhase(TransitionPhase.PRE_EXECUTION)
         contributesToFraudProof(preStateRoot, transactionHash)
     {
         // Exit quickly to avoid unnecessary work.
         require(
-            (
-                ovmStateManager.hasAccount(_ovmContractAddress) == false
-                && ovmStateManager.hasEmptyAccount(_ovmContractAddress) == false
-            ),
+            (ovmStateManager.hasAccount(_ovmContractAddress) == false &&
+                ovmStateManager.hasEmptyAccount(_ovmContractAddress) == false),
             "Account state has already been proven."
         );
 
         // Function will fail if the proof is not a valid inclusion or exclusion proof.
-        (
-            bool exists,
-            bytes memory encodedAccount
-        ) = Lib_SecureMerkleTrie.get(
-            abi.encodePacked(_ovmContractAddress),
-            _stateTrieWitness,
-            preStateRoot
-        );
+        (bool exists, bytes memory encodedAccount) =
+            Lib_SecureMerkleTrie.get(
+                abi.encodePacked(_ovmContractAddress),
+                _stateTrieWitness,
+                preStateRoot
+            );
 
         if (exists == true) {
             // Account exists, this was an inclusion proof.
-            Lib_OVMCodec.EVMAccount memory account = Lib_OVMCodec.decodeEVMAccount(
-                encodedAccount
-            );
+            Lib_OVMCodec.EVMAccount memory account =
+                Lib_OVMCodec.decodeEVMAccount(encodedAccount);
 
             address ethContractAddress = _ethContractAddress;
             if (account.codeHash == EMPTY_ACCOUNT_CODE_HASH) {
@@ -226,7 +213,8 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
                 // Otherwise, make sure that the code at the provided eth address matches the hash
                 // of the code stored on L2.
                 require(
-                    Lib_EthUtils.getCodeHash(ethContractAddress) == account.codeHash,
+                    Lib_EthUtils.getCodeHash(ethContractAddress) ==
+                        account.codeHash,
                     "OVM_StateTransitioner: Provided L1 contract code hash does not match L2 contract code hash."
                 );
             }
@@ -259,14 +247,15 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
         bytes32 _key,
         bytes memory _storageTrieWitness
     )
-        override
         public
+        override
         onlyDuringPhase(TransitionPhase.PRE_EXECUTION)
         contributesToFraudProof(preStateRoot, transactionHash)
     {
         // Exit quickly to avoid unnecessary work.
         require(
-            ovmStateManager.hasContractStorage(_ovmContractAddress, _key) == false,
+            ovmStateManager.hasContractStorage(_ovmContractAddress, _key) ==
+                false,
             "Storage slot has already been proven."
         );
 
@@ -275,7 +264,8 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
             "Contract must be verified before proving a storage slot."
         );
 
-        bytes32 storageRoot = ovmStateManager.getAccountStorageRoot(_ovmContractAddress);
+        bytes32 storageRoot =
+            ovmStateManager.getAccountStorageRoot(_ovmContractAddress);
         bytes32 value;
 
         if (storageRoot == EMPTY_ACCOUNT_STORAGE_ROOT) {
@@ -283,14 +273,12 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
             value = bytes32(0);
         } else {
             // Function will fail if the proof is not a valid inclusion or exclusion proof.
-            (
-                bool exists,
-                bytes memory encodedValue
-            ) = Lib_SecureMerkleTrie.get(
-                abi.encodePacked(_key),
-                _storageTrieWitness,
-                storageRoot
-            );
+            (bool exists, bytes memory encodedValue) =
+                Lib_SecureMerkleTrie.get(
+                    abi.encodePacked(_key),
+                    _storageTrieWitness,
+                    storageRoot
+                );
 
             if (exists == true) {
                 // Inclusion proof.
@@ -304,13 +292,8 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
             }
         }
 
-        ovmStateManager.putContractStorage(
-            _ovmContractAddress,
-            _key,
-            value
-        );
+        ovmStateManager.putContractStorage(_ovmContractAddress, _key, value);
     }
-
 
     /*******************************
      * Public Functions: Execution *
@@ -320,11 +303,9 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
      * Executes the state transition.
      * @param _transaction OVM transaction to execute.
      */
-    function applyTransaction(
-        Lib_OVMCodec.Transaction memory _transaction
-    )
-        override
+    function applyTransaction(Lib_OVMCodec.Transaction memory _transaction)
         public
+        override
         onlyDuringPhase(TransitionPhase.PRE_EXECUTION)
         contributesToFraudProof(preStateRoot, transactionHash)
     {
@@ -335,14 +316,15 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
 
         // We require gas to complete the logic here in run() before/after execution,
         // But must ensure the full _tx.gasLimit can be given to the ovmCALL (determinism)
-        // This includes 1/64 of the gas getting lost because of EIP-150 (lost twice--first 
+        // This includes 1/64 of the gas getting lost because of EIP-150 (lost twice--first
         // going into EM, then going into the code contract).
         require(
-            gasleft() >= 100000 + _transaction.gasLimit * 1032 / 1000, // 1032/1000 = 1.032 = (64/63)^2 rounded up
+            gasleft() >= 100000 + (_transaction.gasLimit * 1032) / 1000, // 1032/1000 = 1.032 = (64/63)^2 rounded up
             "Not enough gas to execute transaction deterministically."
         );
 
-        iOVM_ExecutionManager ovmExecutionManager = iOVM_ExecutionManager(resolve("OVM_ExecutionManager"));
+        iOVM_ExecutionManager ovmExecutionManager =
+            iOVM_ExecutionManager(resolve("OVM_ExecutionManager"));
 
         // We call `setExecutionManager` right before `run` (and not earlier) just in case the
         // OVM_ExecutionManager address was updated between the time when this contract was created
@@ -357,7 +339,6 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
         phase = TransitionPhase.POST_EXECUTION;
     }
 
-
     /************************************
      * Public Functions: Post-Execution *
      ************************************/
@@ -371,8 +352,8 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
         address _ovmContractAddress,
         bytes memory _stateTrieWitness
     )
-        override
         public
+        override
         onlyDuringPhase(TransitionPhase.POST_EXECUTION)
         contributesToFraudProof(preStateRoot, transactionHash)
     {
@@ -381,26 +362,23 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
             "All storage must be committed before committing account states."
         );
 
-        require (
+        require(
             ovmStateManager.commitAccount(_ovmContractAddress) == true,
             "Account state wasn't changed or has already been committed."
         );
 
-        Lib_OVMCodec.Account memory account = ovmStateManager.getAccount(_ovmContractAddress);
+        Lib_OVMCodec.Account memory account =
+            ovmStateManager.getAccount(_ovmContractAddress);
 
         postStateRoot = Lib_SecureMerkleTrie.update(
             abi.encodePacked(_ovmContractAddress),
-            Lib_OVMCodec.encodeEVMAccount(
-                Lib_OVMCodec.toEVMAccount(account)
-            ),
+            Lib_OVMCodec.encodeEVMAccount(Lib_OVMCodec.toEVMAccount(account)),
             _stateTrieWitness,
             postStateRoot
         );
 
         // Emit an event to help clients figure out the proof ordering.
-        emit AccountCommitted(
-            _ovmContractAddress
-        );
+        emit AccountCommitted(_ovmContractAddress);
     }
 
     /**
@@ -414,18 +392,21 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
         bytes32 _key,
         bytes memory _storageTrieWitness
     )
-        override
         public
+        override
         onlyDuringPhase(TransitionPhase.POST_EXECUTION)
         contributesToFraudProof(preStateRoot, transactionHash)
     {
         require(
-            ovmStateManager.commitContractStorage(_ovmContractAddress, _key) == true,
+            ovmStateManager.commitContractStorage(_ovmContractAddress, _key) ==
+                true,
             "Storage slot value wasn't changed or has already been committed."
         );
 
-        Lib_OVMCodec.Account memory account = ovmStateManager.getAccount(_ovmContractAddress);
-        bytes32 value = ovmStateManager.getContractStorage(_ovmContractAddress, _key);
+        Lib_OVMCodec.Account memory account =
+            ovmStateManager.getAccount(_ovmContractAddress);
+        bytes32 value =
+            ovmStateManager.getContractStorage(_ovmContractAddress, _key);
 
         account.storageRoot = Lib_SecureMerkleTrie.update(
             abi.encodePacked(_key),
@@ -439,12 +420,8 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
         ovmStateManager.putAccount(_ovmContractAddress, account);
 
         // Emit an event to help clients figure out the proof ordering.
-        emit ContractStorageCommitted(
-            _ovmContractAddress,
-            _key
-        );
+        emit ContractStorageCommitted(_ovmContractAddress, _key);
     }
-
 
     /**********************************
      * Public Functions: Finalization *
@@ -454,8 +431,8 @@ contract OVM_StateTransitioner is Lib_AddressResolver, Abs_FraudContributor, iOV
      * Finalizes the transition process.
      */
     function completeTransition()
-        override
         public
+        override
         onlyDuringPhase(TransitionPhase.POST_EXECUTION)
     {
         require(

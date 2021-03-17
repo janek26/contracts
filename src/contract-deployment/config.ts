@@ -1,7 +1,7 @@
-/* External Imports */
-import { Signer, ContractFactory, Contract } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Overrides } from '@ethersproject/contracts'
+/* External Imports */
+import { Contract, ContractFactory, Signer } from 'ethers'
 
 /* Internal Imports */
 import { getContractFactory } from '../contract-defs'

@@ -2,7 +2,19 @@
   "$schema": "http://json.schemastore.org/prettierrc",
   "trailingComma": "es5",
   "tabWidth": 2,
+  "useTabs": false,
   "semi": false,
   "singleQuote": true,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": "*.sol",
+      "options": {
+        "singleQuote": false,
+        "tabWidth": 4
+      }
+    }
+  ]
 }

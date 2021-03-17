@@ -1,10 +1,10 @@
 /* Internal Imports */
 import {
   ExecutionManagerTestRunner,
-  TestDefinition,
-  OVM_TX_GAS_LIMIT,
   NON_NULL_BYTES32,
+  OVM_TX_GAS_LIMIT,
   REVERT_FLAGS,
+  TestDefinition,
 } from '../../../../helpers'
 
 const test_ovmREVERT: TestDefinition = {

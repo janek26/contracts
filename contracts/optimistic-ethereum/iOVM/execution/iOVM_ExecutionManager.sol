@@ -67,7 +67,6 @@ interface iOVM_ExecutionManager {
         uint256 nuisanceGasLeft;
     }
 
-
     /************************************
      * Transaction Execution Entrypoint *
      ************************************/
@@ -77,26 +76,32 @@ interface iOVM_ExecutionManager {
         address _txStateManager
     ) external;
 
-
     /*******************
      * Context Opcodes *
      *******************/
 
     function ovmCALLER() external view returns (address _caller);
-    function ovmADDRESS() external view returns (address _address);
-    function ovmTIMESTAMP() external view returns (uint256 _timestamp);
-    function ovmNUMBER() external view returns (uint256 _number);
-    function ovmGASLIMIT() external view returns (uint256 _gasLimit);
-    function ovmCHAINID() external view returns (uint256 _chainId);
 
+    function ovmADDRESS() external view returns (address _address);
+
+    function ovmTIMESTAMP() external view returns (uint256 _timestamp);
+
+    function ovmNUMBER() external view returns (uint256 _number);
+
+    function ovmGASLIMIT() external view returns (uint256 _gasLimit);
+
+    function ovmCHAINID() external view returns (uint256 _chainId);
 
     /**********************
      * L2 Context Opcodes *
      **********************/
 
-    function ovmL1QUEUEORIGIN() external view returns (Lib_OVMCodec.QueueOrigin _queueOrigin);
-    function ovmL1TXORIGIN() external view returns (address _l1TxOrigin);
+    function ovmL1QUEUEORIGIN()
+        external
+        view
+        returns (Lib_OVMCodec.QueueOrigin _queueOrigin);
 
+    function ovmL1TXORIGIN() external view returns (address _l1TxOrigin);
 
     /*******************
      * Halting Opcodes *
@@ -104,53 +109,83 @@ interface iOVM_ExecutionManager {
 
     function ovmREVERT(bytes memory _data) external;
 
-
     /*****************************
      * Contract Creation Opcodes *
      *****************************/
 
-    function ovmCREATE(bytes memory _bytecode) external returns (address _contract, bytes memory _revertdata);
-    function ovmCREATE2(bytes memory _bytecode, bytes32 _salt) external returns (address _contract, bytes memory _revertdata);
+    function ovmCREATE(bytes memory _bytecode)
+        external
+        returns (address _contract, bytes memory _revertdata);
 
+    function ovmCREATE2(bytes memory _bytecode, bytes32 _salt)
+        external
+        returns (address _contract, bytes memory _revertdata);
 
     /*******************************
      * Account Abstraction Opcodes *
      ******************************/
 
     function ovmGETNONCE() external returns (uint256 _nonce);
-    function ovmSETNONCE(uint256 _nonce) external;
-    function ovmCREATEEOA(bytes32 _messageHash, uint8 _v, bytes32 _r, bytes32 _s) external;
 
+    function ovmSETNONCE(uint256 _nonce) external;
+
+    function ovmCREATEEOA(
+        bytes32 _messageHash,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) external;
 
     /****************************
      * Contract Calling Opcodes *
      ****************************/
 
-    function ovmCALL(uint256 _gasLimit, address _address, bytes memory _calldata) external returns (bool _success, bytes memory _returndata);
-    function ovmSTATICCALL(uint256 _gasLimit, address _address, bytes memory _calldata) external returns (bool _success, bytes memory _returndata);
-    function ovmDELEGATECALL(uint256 _gasLimit, address _address, bytes memory _calldata) external returns (bool _success, bytes memory _returndata);
+    function ovmCALL(
+        uint256 _gasLimit,
+        address _address,
+        bytes memory _calldata
+    ) external returns (bool _success, bytes memory _returndata);
 
+    function ovmSTATICCALL(
+        uint256 _gasLimit,
+        address _address,
+        bytes memory _calldata
+    ) external returns (bool _success, bytes memory _returndata);
+
+    function ovmDELEGATECALL(
+        uint256 _gasLimit,
+        address _address,
+        bytes memory _calldata
+    ) external returns (bool _success, bytes memory _returndata);
 
     /****************************
      * Contract Storage Opcodes *
      ****************************/
 
     function ovmSLOAD(bytes32 _key) external returns (bytes32 _value);
-    function ovmSSTORE(bytes32 _key, bytes32 _value) external;
 
+    function ovmSSTORE(bytes32 _key, bytes32 _value) external;
 
     /*************************
      * Contract Code Opcodes *
      *************************/
 
-    function ovmEXTCODECOPY(address _contract, uint256 _offset, uint256 _length) external returns (bytes memory _code);
-    function ovmEXTCODESIZE(address _contract) external returns (uint256 _size);
-    function ovmEXTCODEHASH(address _contract) external returns (bytes32 _hash);
+    function ovmEXTCODECOPY(
+        address _contract,
+        uint256 _offset,
+        uint256 _length
+    ) external returns (bytes memory _code);
 
+    function ovmEXTCODESIZE(address _contract) external returns (uint256 _size);
+
+    function ovmEXTCODEHASH(address _contract) external returns (bytes32 _hash);
 
     /***************************************
      * Public Functions: Execution Context *
      ***************************************/
 
-    function getMaxTransactionGasLimit() external view returns (uint _maxTransactionGasLimit);
+    function getMaxTransactionGasLimit()
+        external
+        view
+        returns (uint256 _maxTransactionGasLimit);
 }

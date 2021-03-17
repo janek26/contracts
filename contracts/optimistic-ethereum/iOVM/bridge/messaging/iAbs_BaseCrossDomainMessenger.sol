@@ -6,7 +6,6 @@ pragma experimental ABIEncoderV2;
  * @title iAbs_BaseCrossDomainMessenger
  */
 interface iAbs_BaseCrossDomainMessenger {
-
     /**********
      * Events *
      **********/

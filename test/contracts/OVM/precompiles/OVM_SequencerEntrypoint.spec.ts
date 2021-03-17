@@ -1,19 +1,18 @@
-import { expect } from '../../../setup'
-
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory, Wallet } from 'ethers'
 /* External Imports */
-import { waffle, ethers } from 'hardhat'
-import { ContractFactory, Wallet, Contract } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
+import { ethers, waffle } from 'hardhat'
 
 /* Internal Imports */
 import { getContractInterface } from '../../../../src'
 import {
-  encodeSequencerCalldata,
-  signNativeTransaction,
-  signEthSignMessage,
   DEFAULT_EIP155_TX,
-  serializeNativeTransaction,
+  encodeSequencerCalldata,
   serializeEthSignTransaction,
+  serializeNativeTransaction,
+  signEthSignMessage,
+  signNativeTransaction,
 } from '../../../helpers'
 
 describe('OVM_SequencerEntrypoint', () => {

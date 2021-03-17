@@ -1,11 +1,8 @@
-import { expect } from '../../../../setup'
-
-/* External Imports */
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, Signer, constants } from 'ethers'
 import { ethers } from 'hardhat'
-import { Signer, Contract, constants } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
 
-/* Internal Imports */
 import { NON_ZERO_ADDRESS, makeAddressManager } from '../../../../helpers'
 
 const L1_ETH_GATEWAY_NAME = 'Proxy__OVM_L1CrossDomainMessenger'

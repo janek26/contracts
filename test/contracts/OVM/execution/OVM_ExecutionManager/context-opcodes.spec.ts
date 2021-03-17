@@ -1,9 +1,9 @@
 /* Internal Imports */
 import {
   ExecutionManagerTestRunner,
-  TestDefinition,
   NON_NULL_BYTES32,
   OVM_TX_GAS_LIMIT,
+  TestDefinition,
 } from '../../../../helpers'
 
 const globalContext = {

@@ -10,7 +10,7 @@ library Lib_RingBuffer {
 
     struct Buffer {
         uint256 length;
-        mapping (uint256 => bytes32) buf;
+        mapping(uint256 => bytes32) buf;
     }
 
     struct RingBuffer {
@@ -25,20 +25,17 @@ library Lib_RingBuffer {
         // contextA
         uint40 globalIndex;
         bytes27 extraData;
-
         // contextB
         uint64 currBufferIndex;
         uint40 prevResetIndex;
         uint40 currResetIndex;
     }
 
-
     /*************
      * Constants *
      *************/
 
     uint256 constant MIN_CAPACITY = 16;
-
 
     /**********************
      * Internal Functions *
@@ -54,9 +51,7 @@ library Lib_RingBuffer {
         RingBuffer storage _self,
         bytes32 _value,
         bytes27 _extraData
-    )
-        internal
-    {
+    ) internal {
         RingBufferContext memory ctx = _self.getContext();
         Buffer storage currBuffer = _self.getBuffer(ctx.currBufferIndex);
 
@@ -97,18 +92,10 @@ library Lib_RingBuffer {
      * @param _self Buffer to access.
      * @param _value Value to push to the buffer.
      */
-    function push(
-        RingBuffer storage _self,
-        bytes32 _value
-    )
-        internal
-    {
+    function push(RingBuffer storage _self, bytes32 _value) internal {
         RingBufferContext memory ctx = _self.getContext();
-        
-        _self.push(
-            _value,
-            ctx.extraData
-        );
+
+        _self.push(_value, ctx.extraData);
     }
 
     /**
@@ -117,22 +104,14 @@ library Lib_RingBuffer {
      * @param _index Element index to retrieve.
      * @return Value of the element at the given index.
      */
-    function get(
-        RingBuffer storage _self,
-        uint256 _index
-    )
+    function get(RingBuffer storage _self, uint256 _index)
         internal
         view
-        returns (
-            bytes32    
-        )
+        returns (bytes32)
     {
         RingBufferContext memory ctx = _self.getContext();
 
-        require(
-            _index < ctx.globalIndex,
-            "Index out of bounds."
-        );
+        require(_index < ctx.globalIndex, "Index out of bounds.");
 
         Buffer storage currBuffer = _self.getBuffer(ctx.currBufferIndex);
         Buffer storage prevBuffer = _self.getBuffer(ctx.currBufferIndex + 1);
@@ -143,10 +122,7 @@ library Lib_RingBuffer {
             uint256 relativeIndex = _index - ctx.currResetIndex;
 
             // Shouldn't happen but why not check.
-            require(
-                relativeIndex < currBuffer.length,
-                "Index out of bounds."
-            );
+            require(relativeIndex < currBuffer.length, "Index out of bounds.");
 
             return currBuffer.buf[relativeIndex];
         } else {
@@ -161,10 +137,7 @@ library Lib_RingBuffer {
             );
 
             // Make sure we're not trying to read beyond the array.
-            require(
-                relativeIndex <= prevBuffer.length,
-                "Index out of bounds."
-            );
+            require(relativeIndex <= prevBuffer.length, "Index out of bounds.");
 
             return prevBuffer.buf[prevBuffer.length - relativeIndex];
         }
@@ -180,9 +153,7 @@ library Lib_RingBuffer {
         RingBuffer storage _self,
         uint40 _index,
         bytes27 _extraData
-    )
-        internal
-    {
+    ) internal {
         RingBufferContext memory ctx = _self.getContext();
 
         require(
@@ -212,14 +183,9 @@ library Lib_RingBuffer {
     function deleteElementsAfterInclusive(
         RingBuffer storage _self,
         uint40 _index
-    )
-        internal
-    {
+    ) internal {
         RingBufferContext memory ctx = _self.getContext();
-        _self.deleteElementsAfterInclusive(
-            _index,
-            ctx.extraData
-        );
+        _self.deleteElementsAfterInclusive(_index, ctx.extraData);
     }
 
     /**
@@ -227,14 +193,10 @@ library Lib_RingBuffer {
      * @param _self Buffer to access.
      * @return Current global index.
      */
-    function getLength(
-        RingBuffer storage _self
-    )
+    function getLength(RingBuffer storage _self)
         internal
         view
-        returns (
-            uint40
-        )
+        returns (uint40)
     {
         RingBufferContext memory ctx = _self.getContext();
         return ctx.globalIndex;
@@ -245,10 +207,7 @@ library Lib_RingBuffer {
      * @param _self Buffer to access.
      * @param _extraData New global extra data.
      */
-    function setExtraData(
-        RingBuffer storage _self,
-        bytes27 _extraData
-    )
+    function setExtraData(RingBuffer storage _self, bytes27 _extraData)
         internal
     {
         RingBufferContext memory ctx = _self.getContext();
@@ -261,14 +220,10 @@ library Lib_RingBuffer {
      * @param _self Buffer to access.
      * @return Current global extra data.
      */
-    function getExtraData(
-        RingBuffer storage _self
-    )
+    function getExtraData(RingBuffer storage _self)
         internal
         view
-        returns (
-            bytes27
-        )
+        returns (bytes27)
     {
         RingBufferContext memory ctx = _self.getContext();
         return ctx.extraData;
@@ -279,10 +234,7 @@ library Lib_RingBuffer {
      * @param _self Buffer to access.
      * @param _ctx Current ring buffer context.
      */
-    function setContext(
-        RingBuffer storage _self,
-        RingBufferContext memory _ctx
-    )
+    function setContext(RingBuffer storage _self, RingBufferContext memory _ctx)
         internal
     {
         bytes32 contextA;
@@ -318,14 +270,10 @@ library Lib_RingBuffer {
      * @param _self Buffer to access.
      * @return Current ring buffer context.
      */
-    function getContext(
-        RingBuffer storage _self
-    )
+    function getContext(RingBuffer storage _self)
         internal
         view
-        returns (
-            RingBufferContext memory
-        )
+        returns (RingBufferContext memory)
     {
         bytes32 contextA = _self.contextA;
         bytes32 contextB = _self.contextB;
@@ -333,26 +281,48 @@ library Lib_RingBuffer {
         uint40 globalIndex;
         bytes27 extraData;
         assembly {
-            globalIndex := and(contextA, 0x000000000000000000000000000000000000000000000000000000FFFFFFFFFF)
-            extraData   := and(contextA, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000)
+            globalIndex := and(
+                contextA,
+                0x000000000000000000000000000000000000000000000000000000FFFFFFFFFF
+            )
+            extraData := and(
+                contextA,
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000
+            )
         }
 
         uint64 currBufferIndex;
         uint40 prevResetIndex;
         uint40 currResetIndex;
         assembly {
-            currBufferIndex :=          and(contextB, 0x000000000000000000000000000000000000000000000000FFFFFFFFFFFFFFFF)
-            prevResetIndex  := shr(64,  and(contextB, 0x00000000000000000000000000000000000000FFFFFFFFFF0000000000000000))
-            currResetIndex  := shr(104, and(contextB, 0x0000000000000000000000000000FFFFFFFFFF00000000000000000000000000))
+            currBufferIndex := and(
+                contextB,
+                0x000000000000000000000000000000000000000000000000FFFFFFFFFFFFFFFF
+            )
+            prevResetIndex := shr(
+                64,
+                and(
+                    contextB,
+                    0x00000000000000000000000000000000000000FFFFFFFFFF0000000000000000
+                )
+            )
+            currResetIndex := shr(
+                104,
+                and(
+                    contextB,
+                    0x0000000000000000000000000000FFFFFFFFFF00000000000000000000000000
+                )
+            )
         }
 
-        return RingBufferContext({
-            globalIndex: globalIndex,
-            extraData: extraData,
-            currBufferIndex: currBufferIndex,
-            prevResetIndex: prevResetIndex,
-            currResetIndex: currResetIndex
-        });
+        return
+            RingBufferContext({
+                globalIndex: globalIndex,
+                extraData: extraData,
+                currBufferIndex: currBufferIndex,
+                prevResetIndex: prevResetIndex,
+                currResetIndex: currResetIndex
+            });
     }
 
     /**
@@ -361,15 +331,10 @@ library Lib_RingBuffer {
      * @param _which Index of the sub buffer to access.
      * @return Sub buffer for the index.
      */
-    function getBuffer(
-        RingBuffer storage _self,
-        uint256 _which
-    )
+    function getBuffer(RingBuffer storage _self, uint256 _which)
         internal
         view
-        returns (
-            Buffer storage
-        )
+        returns (Buffer storage)
     {
         return _which % 2 == 0 ? _self.bufferA : _self.bufferB;
     }

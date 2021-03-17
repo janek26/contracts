@@ -1,18 +1,15 @@
-import { expect } from '../../../../setup'
-
-/* External Imports */
-import { ethers } from 'hardhat'
-import { Signer, ContractFactory, Contract } from 'ethers'
-import { smockit, MockContract } from '@eth-optimism/smock'
 import { toHexString } from '@eth-optimism/core-utils'
+import { MockContract, smockit } from '@eth-optimism/smock'
+import { expect } from 'chai'
+import { Contract, ContractFactory, Signer } from 'ethers'
+import { ethers } from 'hardhat'
 
-/* Internal Imports */
 import {
-  makeAddressManager,
-  NON_ZERO_ADDRESS,
-  NON_NULL_BYTES32,
   DUMMY_BATCH_HEADERS,
   DUMMY_BATCH_PROOFS,
+  NON_NULL_BYTES32,
+  NON_ZERO_ADDRESS,
+  makeAddressManager,
 } from '../../../../helpers'
 
 describe('OVM_L1MultiMessageRelayer', () => {
